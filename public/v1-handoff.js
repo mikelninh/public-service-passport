@@ -1,4 +1,4 @@
-import { createCitizenAuthorityHandoff, CITIZEN_AUTHORITY_HANDOFF_STORAGE_KEY } from './case-handoff.js';
+import { createCitizenCaseHandoff, CITIZEN_CASE_HANDOFF_STORAGE_KEY } from './citizen-case-handoff.js';
 
 function householdFromUi() {
   const singleParent = document.querySelector('input[name="householdType"]:checked')?.value === 'single';
@@ -27,13 +27,13 @@ if (button) {
     }
 
     try {
-      const handoff = createCitizenAuthorityHandoff({
+      const handoff = createCitizenCaseHandoff({
         household: householdFromUi(),
         policyVersion: document.querySelector('#v1-policy')?.textContent || 'unknown',
         handoffId: globalThis.crypto?.randomUUID?.() || `local-${Date.now()}`,
         now: Date.now()
       });
-      localStorage.setItem(CITIZEN_AUTHORITY_HANDOFF_STORAGE_KEY, JSON.stringify(handoff));
+      localStorage.setItem(CITIZEN_CASE_HANDOFF_STORAGE_KEY, JSON.stringify(handoff));
       window.location.assign('/authority.html?source=citizen');
     } catch (cause) {
       if (error) {
