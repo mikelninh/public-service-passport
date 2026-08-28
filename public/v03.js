@@ -1,4 +1,5 @@
 import { prepareLocalApplicationPacket, validateLocalApplicationPacket } from './packet-core.js';
+import { escapeHtml, safeText } from './safe-html.js';
 
 let latestResult = null;
 let currentService = 'kiz';
@@ -7,7 +8,8 @@ let latestPacket = null;
 let reviewState = { claims_reviewed: false, evidence_status_reviewed: false, not_submission_understood: false };
 
 const serviceLabel = (id) => ({ kiz: 'Kinderzuschlag', wohngeld: 'Wohngeld', but: 'Bildung & Teilhabe' })[id] || id;
-const evidenceLabel = (id) => ({ child_household: 'Household facts', identity_documents: 'Identity documents', income_proof: 'Income evidence', housing_proof: 'Housing evidence', rent_payment_proof: 'Recent rent-payment proof', benefit_notice: 'Award notice' })[id] || id;
+const evidenceLabel = (id) => ({ child_household: 'Haushaltsangaben', identity_documents: 'Identitätsnachweis', income_proof: 'Einkommensnachweise', housing_proof: 'Miet-/Wohnkostennachweis', rent_payment_proof: 'Mietzahlungsnachweis', benefit_notice: 'Bewilligungsbescheid' })[id] || id;
+const fieldLabel = (id, fallback) => ({ applicant_name: 'Name', applicant_address: 'Adresse', applicant_email: 'E-Mail', household_type: 'Haushalt', children: 'Kinder', income: 'Bruttoeinkommen', rent: 'Warmmiete', kindergeld_status: 'Kindergeld', basic_security_status: 'Bezug von Grundsicherung', residency_basis: 'Aufenthaltsstatus / Aufenthaltsrecht' })[id] || fallback;
 
 function householdFromPage() {
   const form = document.querySelector('#household-form');
@@ -18,7 +20,7 @@ function householdFromPage() {
     children: [...document.querySelectorAll('#children-list input')].map((input) => ({ age: Number(input.value) })),
     monthlyGrossIncome: Number(document.querySelector('#income')?.value || 0),
     warmRent: Number(document.querySelector('#rent')?.value || 0),
-    receivesKindergeld: document.querySelector('#kindergeld')?.checked !== false,
+    receivesKindergeld: document.querySelector('#kindergeld')?.checked === true,
     city: 'Berlin'
   };
 }
@@ -28,11 +30,15 @@ async function fetchResult() {
     method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ household: householdFromPage() })
   });
   const result = await response.json();
-  if (!response.ok || !result.ok) throw new Error(result.errors?.join(' ') || result.error || 'Evaluation failed');
+  if (!response.ok || !result.ok) throw new Error(result.errors?.join(' ') || result.error || 'Prüfung fehlgeschlagen.');
+  setLatestResult(result);
+  return result;
+}
+
+function setLatestResult(result) {
   latestResult = result;
   syncPreparedFromPassportLocker();
   renderStudio();
-  return result;
 }
 
 function syncPreparedFromPassportLocker() {
@@ -44,38 +50,58 @@ function syncPreparedFromPassportLocker() {
 
 function applicationDetails() {
   return {
-    applicant_name: document.querySelector('#v03-applicant-name')?.value || '',
-    applicant_address: document.querySelector('#v03-applicant-address')?.value || '',
-    applicant_email: document.querySelector('#v03-applicant-email')?.value || '',
-    basic_security_status: document.querySelector('#v03-basic-security')?.value || '',
-    residency_basis: document.querySelector('#v03-residency')?.value || ''
+    applicant_name: safeText(document.querySelector('#v03-applicant-name')?.value, 120),
+    applicant_address: safeText(document.querySelector('#v03-applicant-address')?.value, 300),
+    applicant_email: safeText(document.querySelector('#v03-applicant-email')?.value, 254),
+    basic_security_status: safeText(document.querySelector('#v03-basic-security')?.value, 80),
+    residency_basis: safeText(document.querySelector('#v03-residency')?.value, 160)
   };
 }
 
 function studioMarkup() {
-  return `<section id="application-studio" class="application-studio panel hidden">
+  return `<section id="application-studio" class="application-studio citizen-application panel hidden">
     <div class="application-header">
-      <div><span class="section-index">04</span><p class="eyebrow-small">APPLICATION STUDIO</p><h2>Prepare the packet. Keep the final click human.</h2><p class="application-intro">Not the authority's official form: a provenance-aware preparation layer that pre-fills what Benefit Passport knows, binds evidence, exposes gaps and exports only after human review.</p></div>
-      <div class="service-switch"><button data-v03-service="kiz" class="active">KiZ</button><button data-v03-service="wohngeld">Wohngeld</button><button data-v03-service="but">BuT</button></div>
+      <div><span class="section-index">04</span><p class="eyebrow-small">ANTRAG VORBEREITEN</p><h2>Entwurf vorbereiten. Sie prüfen. Sie entscheiden.</h2><p class="application-intro">Wir übernehmen bekannte Angaben in einen lokalen Entwurf und zeigen, was noch fehlt. Das ist nicht das offizielle Formular und es wird nichts automatisch versendet.</p></div>
+      <div class="service-switch" aria-label="Leistung auswählen"><button data-v03-service="kiz" class="active">KiZ</button><button data-v03-service="wohngeld">Wohngeld</button><button data-v03-service="but">Bildung & Teilhabe</button></div>
     </div>
+
     <div class="application-layout">
-      <div class="application-details-card"><div class="subhead"><h3>Local-only applicant details</h3><span>not sent to /api/evaluate</span></div><div class="app-field-grid">
-        <label><span>Applicant name</span><input id="v03-applicant-name" value="Mara Beispiel"></label>
-        <label><span>Contact email</span><input id="v03-applicant-email" value="mara@example.invalid"></label>
-        <label class="wide"><span>Address</span><input id="v03-applicant-address" value="Sonnenallee 100, 12045 Berlin"></label>
-        <label id="v03-basic-wrap"><span>Basic-security receipt</span><select id="v03-basic-security"><option>No (self-attested)</option><option>Yes (self-attested)</option><option>Unknown</option></select></label>
-        <label id="v03-residency-wrap" class="hidden"><span>Residence / residence-right basis</span><select id="v03-residency"><option>German / EU status to be confirmed by applicant</option><option>Non-EU residence document to be attached</option><option>Unknown</option></select></label>
-      </div><p class="local-note">Synthetic demo values by default. These identity/contact fields stay in this page unless you export.</p></div>
-      <div class="packet-card"><div class="packet-head"><div><small id="v03-service-label">Kinderzuschlag</small><strong id="v03-packet-id">Build a bridge first</strong></div><span id="v03-packet-status" class="packet-status">waiting</span></div>
-        <div class="packet-meter"><div><span>Fields</span><strong id="v03-fields-metric">—</strong></div><div><span>Evidence</span><strong id="v03-evidence-metric">—</strong></div><div><span>Blockers</span><strong id="v03-blockers-metric">—</strong></div></div>
-        <div class="packet-columns"><div><h3>Pre-filled fields</h3><div id="v03-fields" class="packet-list"></div></div><div><h3>Evidence bindings</h3><div id="v03-evidence" class="packet-list"></div></div></div>
-        <div class="packet-columns packet-lower"><div><h3>Derived signals</h3><div id="v03-signals" class="packet-list"></div></div><div><h3>Still needs a human</h3><div id="v03-blockers" class="packet-list"></div></div></div>
-        <div class="official-components"><span>Official handoff expects</span><div id="v03-components"></div></div>
+      <div class="application-details-card">
+        <div class="subhead"><h3>Persönliche Angaben ergänzen</h3><span>bleiben für die Vorbereitung im Browser</span></div>
+        <div class="app-field-grid">
+          <label><span>Name</span><input id="v03-applicant-name" maxlength="120" autocomplete="name" value="Mara Beispiel"></label>
+          <label><span>E-Mail</span><input id="v03-applicant-email" type="email" maxlength="254" autocomplete="email" value="mara@example.invalid"></label>
+          <label class="wide"><span>Adresse</span><input id="v03-applicant-address" maxlength="300" autocomplete="street-address" value="Sonnenallee 100, 12045 Berlin"></label>
+          <label id="v03-basic-wrap"><span>Grundsicherung</span><select id="v03-basic-security"><option>Nein (selbst angegeben)</option><option>Ja (selbst angegeben)</option><option>Unbekannt</option></select></label>
+          <label id="v03-residency-wrap" class="hidden"><span>Aufenthaltsstatus / Aufenthaltsrecht</span><select id="v03-residency"><option>Deutsch / EU — durch Person zu bestätigen</option><option>Nicht-EU — Dokument beifügen</option><option>Unbekannt</option></select></label>
+        </div>
+        <p class="local-note">Die Beispielwerte sind synthetisch. Identitäts- und Kontaktdaten werden für den Leistungs-Check nicht an <code>/api/evaluate</code> gesendet.</p>
+      </div>
+
+      <div class="packet-card">
+        <div class="packet-head"><div><small id="v03-service-label">Kinderzuschlag</small><strong id="v03-packet-id">Zuerst Leistungs-Check durchführen</strong></div><span id="v03-packet-status" class="packet-status">wartet</span></div>
+        <div class="packet-meter"><div><span>Angaben</span><strong id="v03-fields-metric">—</strong></div><div><span>Unterlagen</span><strong id="v03-evidence-metric">—</strong></div><div><span>Noch offen</span><strong id="v03-blockers-metric">—</strong></div></div>
+
+        <div class="packet-columns citizen-primary-packet">
+          <div><h3>Was fehlt noch?</h3><div id="v03-blockers" class="packet-list"></div></div>
+          <div><h3>Unterlagen</h3><div id="v03-evidence" class="packet-list"></div></div>
+        </div>
+
+        <details class="packet-details"><summary>Alle vorausgefüllten Angaben ansehen</summary><div id="v03-fields" class="packet-list"></div></details>
+        <details class="packet-details"><summary>Technische Herleitung ansehen</summary><div id="v03-signals" class="packet-list"></div></details>
+        <details class="packet-details"><summary>Was der offizielle Dienst zusätzlich erwartet</summary><div class="official-components"><div id="v03-components"></div></div></details>
       </div>
     </div>
-    <div class="approval-gate"><div class="approval-copy"><span class="lock-icon">⌾</span><div><p class="eyebrow-small">HUMAN APPROVAL GATE</p><h3>Review before export</h3><p>Approval creates a local review manifest. It never submits or signs.</p></div></div>
-      <div class="approval-checks"><label><input type="checkbox" data-v03-review="claims_reviewed"><span>I reviewed the pre-filled claims and local applicant details.</span></label><label><input type="checkbox" data-v03-review="evidence_status_reviewed"><span>I reviewed prepared versus missing evidence.</span></label><label><input type="checkbox" data-v03-review="not_submission_understood"><span>I understand this export is <strong>not</strong> a submission.</span></label></div>
-      <div class="approval-actions"><a id="v03-official-link" class="secondary-button official-button" href="#" target="_blank" rel="noreferrer">Open official service ↗</a><button id="v03-approve" class="primary-button compact" disabled>Approve draft for export</button><button id="v03-export" class="passport-button hidden">Export reviewed packet ↓</button></div><p id="v03-approval-status" class="approval-status">Complete the three review confirmations to approve a local draft.</p>
+
+    <div class="approval-gate citizen-approval">
+      <div class="approval-copy"><span class="lock-icon">✓</span><div><p class="eyebrow-small">IHRE FREIGABE</p><h3>Vor einem Export noch einmal prüfen</h3><p>Die Freigabe bestätigt nur Ihren lokalen Entwurf. Sie ist keine Antragstellung.</p></div></div>
+      <div class="approval-checks">
+        <label><input type="checkbox" data-v03-review="claims_reviewed"><span>Ich habe meine Angaben geprüft.</span></label>
+        <label><input type="checkbox" data-v03-review="evidence_status_reviewed"><span>Ich habe geprüft, welche Unterlagen vorhanden oder noch offen sind.</span></label>
+        <label><input type="checkbox" data-v03-review="not_submission_understood"><span>Ich verstehe: Dieser Export <strong>sendet nichts an eine Behörde.</strong></span></label>
+      </div>
+      <div class="approval-actions"><a id="v03-official-link" class="secondary-button official-button" href="#" target="_blank" rel="noreferrer">Offiziellen Dienst öffnen ↗</a><button id="v03-approve" class="primary-button compact" disabled>Entwurf freigeben</button><button id="v03-export" class="passport-button hidden">Geprüften Entwurf exportieren ↓</button></div>
+      <p id="v03-approval-status" class="approval-status">Bitte die drei Prüfpunkte bestätigen.</p>
     </div>
   </section>`;
 }
@@ -85,19 +111,27 @@ function injectStudio() {
   const passport = document.querySelector('#passport-panel');
   if (!passport) return;
   passport.insertAdjacentHTML('afterend', studioMarkup());
-  document.querySelectorAll('[data-v03-service]').forEach((button) => button.addEventListener('click', () => { currentService = button.dataset.v03Service; resetReview(); renderStudio(); }));
+
+  document.querySelectorAll('[data-v03-service]').forEach((button) => button.addEventListener('click', () => {
+    currentService = button.dataset.v03Service;
+    resetReview();
+    renderStudio();
+  }));
   document.querySelectorAll('#application-studio input, #application-studio select').forEach((input) => {
     if (input.dataset.v03Review) return;
     input.addEventListener('change', () => { resetReview(); renderStudio(); });
     input.addEventListener('input', () => { resetReview(); renderStudio(); });
   });
-  document.querySelectorAll('[data-v03-review]').forEach((input) => input.addEventListener('change', () => { reviewState[input.dataset.v03Review] = input.checked; updateApproval(); }));
+  document.querySelectorAll('[data-v03-review]').forEach((input) => input.addEventListener('change', () => {
+    reviewState[input.dataset.v03Review] = input.checked;
+    updateApproval();
+  }));
   document.querySelector('#v03-approve').addEventListener('click', approveExport);
   document.querySelector('#v03-export').addEventListener('click', exportPacket);
 }
 
 function item(label, value, status = '', badge = '') {
-  return `<div class="packet-item ${status}"><div><small>${label}</small><strong>${value ?? 'Not provided'}</strong></div><em>${badge}</em></div>`;
+  return `<div class="packet-item ${escapeHtml(status)}"><div><small>${escapeHtml(label)}</small><strong>${escapeHtml(value ?? 'Nicht angegeben')}</strong></div><em>${escapeHtml(badge)}</em></div>`;
 }
 
 function renderStudio() {
@@ -105,33 +139,46 @@ function renderStudio() {
   const studio = document.querySelector('#application-studio');
   if (!studio || !latestResult) return;
   studio.classList.remove('hidden');
-  document.querySelectorAll('[data-v03-service]').forEach((b) => b.classList.toggle('active', b.dataset.v03Service === currentService));
+  document.querySelectorAll('[data-v03-service]').forEach((button) => button.classList.toggle('active', button.dataset.v03Service === currentService));
   document.querySelector('#v03-basic-wrap').classList.toggle('hidden', currentService !== 'kiz');
   document.querySelector('#v03-residency-wrap').classList.toggle('hidden', currentService !== 'wohngeld');
+
   latestPacket = prepareLocalApplicationPacket(latestResult, currentService, { applicationDetails: applicationDetails(), preparedEvidence: [...preparedEvidence] });
   const packet = latestPacket;
   document.querySelector('#v03-service-label').textContent = packet.serviceLabel;
   document.querySelector('#v03-packet-id').textContent = packet.packetId;
-  const status = document.querySelector('#v03-packet-status'); status.textContent = packet.status.replaceAll('_', ' '); status.className = `packet-status ${packet.status}`;
+  const status = document.querySelector('#v03-packet-status');
+  status.textContent = packet.status === 'ready_for_human_review' ? 'bereit zur Prüfung' : 'noch unvollständig';
+  status.className = `packet-status ${packet.status}`;
   document.querySelector('#v03-official-link').href = packet.officialDestination.url;
-  const filled = packet.fields.filter((f) => f.value != null).length;
-  const evidenceReady = packet.evidenceBindings.filter((e) => e.status !== 'missing').length;
+
+  const filled = packet.fields.filter((field) => field.value != null).length;
+  const evidenceReady = packet.evidenceBindings.filter((entry) => entry.status !== 'missing').length;
   document.querySelector('#v03-fields-metric').textContent = `${filled}/${packet.fields.length}`;
   document.querySelector('#v03-evidence-metric').textContent = `${evidenceReady}/${packet.evidenceBindings.length}`;
   document.querySelector('#v03-blockers-metric').textContent = packet.unresolvedFields.length + packet.missingEvidence.length;
-  document.querySelector('#v03-fields').innerHTML = packet.fields.map((f) => item(f.label, f.value, f.value ? 'ready' : 'missing', f.provenance.type === 'self_attested_claim' ? 'passport claim' : f.value ? 'local input' : 'human needed')).join('');
-  document.querySelector('#v03-evidence').innerHTML = packet.evidenceBindings.map((e) => `<label class="packet-item ${e.status === 'missing' ? 'missing' : 'ready'}"><div><small>${e.label}</small><strong>${e.status === 'claim_available' ? 'Structured claim available' : e.status === 'prepared_by_human' ? 'Marked prepared by human' : 'Not yet prepared'}</strong></div><span class="packet-evidence-toggle"><input type="checkbox" data-v03-evidence="${e.id}" ${e.status !== 'missing' ? 'checked' : ''} ${e.status === 'claim_available' ? 'disabled' : ''}> ${e.status === 'missing' ? 'mark prepared' : e.status === 'claim_available' ? 'claim' : 'prepared'}</span></label>`).join('');
-  document.querySelectorAll('[data-v03-evidence]').forEach((input) => input.addEventListener('change', () => { if (input.checked) preparedEvidence.add(input.dataset.v03Evidence); else preparedEvidence.delete(input.dataset.v03Evidence); resetReview(); renderStudio(); }));
-  document.querySelector('#v03-signals').innerHTML = packet.derivedSignals.map((s) => item(s.label, `${s.value}${s.amount != null ? ` · €${s.amount}${currentService === 'but' ? '/year anchor' : ''}` : ''}`, 'ready', 'derived')).join('') || item('No derived signal', 'Preparation only', '', 'boundary');
-  const blockers = [...packet.unresolvedFields.map((id) => [id.replaceAll('_', ' '), 'Required local human input']), ...packet.missingEvidence.map((id) => [evidenceLabel(id), 'Evidence not yet marked prepared'])];
-  document.querySelector('#v03-blockers').innerHTML = blockers.map(([l,v]) => item(l,v,'missing','blocker')).join('') || item('No preparation blockers', 'Ready for human review', 'ready', 'clear');
-  document.querySelector('#v03-components').innerHTML = packet.officialComponents.map((c) => `<i>${c}</i>`).join('');
+
+  document.querySelector('#v03-fields').innerHTML = packet.fields.map((field) => item(fieldLabel(field.id, field.label), field.value, field.value ? 'ready' : 'missing', field.provenance.type === 'self_attested_claim' ? 'Ihre Angabe' : field.value ? 'lokal ergänzt' : 'noch nötig')).join('');
+  document.querySelector('#v03-evidence').innerHTML = packet.evidenceBindings.map((entry) => `<label class="packet-item ${entry.status === 'missing' ? 'missing' : 'ready'}"><div><small>${escapeHtml(evidenceLabel(entry.id))}</small><strong>${entry.status === 'claim_available' ? 'Angabe vorhanden' : entry.status === 'prepared_by_human' ? 'Von Ihnen als vorbereitet markiert' : 'Noch nicht vorbereitet'}</strong></div><span class="packet-evidence-toggle"><input type="checkbox" data-v03-evidence="${escapeHtml(entry.id)}" ${entry.status !== 'missing' ? 'checked' : ''} ${entry.status === 'claim_available' ? 'disabled' : ''}> ${entry.status === 'missing' ? 'als vorbereitet markieren' : entry.status === 'claim_available' ? 'Angabe' : 'vorbereitet'}</span></label>`).join('');
+  document.querySelectorAll('[data-v03-evidence]').forEach((input) => input.addEventListener('change', () => {
+    if (input.checked) preparedEvidence.add(input.dataset.v03Evidence); else preparedEvidence.delete(input.dataset.v03Evidence);
+    resetReview();
+    renderStudio();
+  }));
+
+  document.querySelector('#v03-signals').innerHTML = packet.derivedSignals.map((signal) => item(signal.label, `${signal.value}${signal.amount != null ? ` · €${signal.amount}${currentService === 'but' ? '/Jahr' : ''}` : ''}`, 'ready', 'abgeleiteter Hinweis')).join('') || item('Keine abgeleiteten Hinweise', 'Nur Vorbereitung', '', 'Grenze');
+  const blockers = [
+    ...packet.unresolvedFields.map((id) => [fieldLabel(id, id.replaceAll('_', ' ')), 'Diese Angabe fehlt noch.']),
+    ...packet.missingEvidence.map((id) => [evidenceLabel(id), 'Diese Unterlage ist noch nicht als vorbereitet markiert.'])
+  ];
+  document.querySelector('#v03-blockers').innerHTML = blockers.map(([label, value]) => item(label, value, 'missing', 'offen')).join('') || item('Nichts mehr offen', 'Der Entwurf ist bereit für Ihre Prüfung.', 'ready', 'bereit');
+  document.querySelector('#v03-components').innerHTML = packet.officialComponents.map((component) => `<i>${escapeHtml(component)}</i>`).join('');
   updateApproval();
 }
 
 function resetReview() {
   reviewState = { claims_reviewed: false, evidence_status_reviewed: false, not_submission_understood: false };
-  document.querySelectorAll('[data-v03-review]').forEach((i) => { i.checked = false; });
+  document.querySelectorAll('[data-v03-review]').forEach((input) => { input.checked = false; });
   document.querySelector('#v03-export')?.classList.add('hidden');
 }
 
@@ -142,9 +189,9 @@ function updateApproval() {
   const status = document.querySelector('#v03-approval-status');
   approve.disabled = !validation.canApproveDraftForExport;
   status.classList.remove('approved');
-  if (validation.missingConfirmations.length) status.textContent = `${validation.missingConfirmations.length} review confirmation${validation.missingConfirmations.length === 1 ? '' : 's'} remaining.`;
-  else if (validation.blockers.length) status.textContent = `Review complete. ${validation.blockers.length} blocker${validation.blockers.length === 1 ? '' : 's'} remain; export will stay DRAFT.`;
-  else status.textContent = 'Review complete. Ready for official-service handoff after local export.';
+  if (validation.missingConfirmations.length) status.textContent = `Noch ${validation.missingConfirmations.length} Prüfpunkt${validation.missingConfirmations.length === 1 ? '' : 'e'} bestätigen.`;
+  else if (validation.blockers.length) status.textContent = `Prüfung bestätigt. ${validation.blockers.length} Punkt${validation.blockers.length === 1 ? '' : 'e'} sind noch offen; der Export bleibt ein Entwurf.`;
+  else status.textContent = 'Alles geprüft. Der lokale Entwurf kann für den offiziellen Dienst exportiert werden.';
 }
 
 function approveExport() {
@@ -152,14 +199,23 @@ function approveExport() {
   if (!validation.canApproveDraftForExport) return;
   latestPacket = { ...latestPacket, humanReview: { approvedAt: new Date().toISOString(), confirmations: { ...reviewState }, readyForOfficialServiceHandoff: validation.readyForOfficialServiceHandoff, submissionAllowed: false, statement: validation.boundary } };
   document.querySelector('#v03-export').classList.remove('hidden');
-  const status = document.querySelector('#v03-approval-status'); status.classList.add('approved'); status.textContent = `${validation.readyForOfficialServiceHandoff ? 'Reviewed ✓ Ready for official-service handoff.' : 'Reviewed ✓ Draft export approved with blockers.'} Nothing has been submitted.`;
+  const status = document.querySelector('#v03-approval-status');
+  status.classList.add('approved');
+  status.textContent = `${validation.readyForOfficialServiceHandoff ? 'Geprüft ✓ Bereit für den offiziellen Dienst.' : 'Geprüft ✓ Entwurf mit offenen Punkten freigegeben.'} Es wurde nichts versendet.`;
 }
 
 function exportPacket() {
   if (!latestPacket?.humanReview) return;
-  const bundle = { exportedAt: new Date().toISOString(), product: 'Benefit Bridge v0.4', packet: latestPacket, explicitBoundary: 'LOCAL EXPORT ONLY — NOT SUBMITTED TO ANY AUTHORITY' };
+  const bundle = { exportedAt: new Date().toISOString(), product: 'Public Service Passport · Benefits v0.4', packet: latestPacket, explicitBoundary: 'LOCAL EXPORT ONLY — NOT SUBMITTED TO ANY AUTHORITY' };
   const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `benefit-bridge-${latestPacket.service}-${latestPacket.packetId}.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `public-service-passport-${latestPacket.service}-${latestPacket.packetId}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
 }
 
 async function registerV03Tools() {
@@ -167,15 +223,15 @@ async function registerV03Tools() {
   const tools = [
     {
       name: 'prepare_application_packet', title: 'Prepare a provenance-aware application packet',
-      description: 'Prepare a browser-local draft packet using Benefit Passport claims, local applicant details and human-marked evidence. Never submits or signs.',
-      inputSchema: { type: 'object', properties: { service: { type: 'string', enum: ['kiz','wohngeld','but'] }, applicationDetails: { type: 'object' }, preparedEvidence: { type: 'array', items: { type: 'string' } } }, required: ['service'], additionalProperties: false }, annotations: { readOnlyHint: true },
-      execute: async (input) => prepareLocalApplicationPacket(latestResult || await fetchResult(), input.service, { applicationDetails: input.applicationDetails || applicationDetails(), preparedEvidence: input.preparedEvidence || [...preparedEvidence] })
+      description: 'Prepare a browser-local draft using passport claims, local applicant details and human-marked evidence. Never submits or signs.',
+      inputSchema: { type: 'object', properties: { service: { type: 'string', enum: ['kiz','wohngeld','but'] }, applicationDetails: { type: 'object' }, preparedEvidence: { type: 'array', items: { type: 'string' }, maxItems: 20 } }, required: ['service'], additionalProperties: false }, annotations: { readOnlyHint: true },
+      execute: async (input = {}) => prepareLocalApplicationPacket(latestResult || await fetchResult(), input.service, { applicationDetails: input.applicationDetails || applicationDetails(), preparedEvidence: Array.isArray(input.preparedEvidence) ? input.preparedEvidence.slice(0, 20) : [...preparedEvidence] })
     },
     {
       name: 'validate_application_packet', title: 'Validate packet blockers and approval requirements',
       description: 'Report missing fields, evidence blockers and human-review requirements for a browser-local application packet. Never changes or submits it.',
       inputSchema: { type: 'object', properties: { service: { type: 'string', enum: ['kiz','wohngeld','but'] } }, required: ['service'], additionalProperties: false }, annotations: { readOnlyHint: true },
-      execute: async (input) => validateLocalApplicationPacket(prepareLocalApplicationPacket(latestResult || await fetchResult(), input.service, { applicationDetails: applicationDetails(), preparedEvidence: [...preparedEvidence] }), reviewState)
+      execute: async (input = {}) => validateLocalApplicationPacket(prepareLocalApplicationPacket(latestResult || await fetchResult(), input.service, { applicationDetails: applicationDetails(), preparedEvidence: [...preparedEvidence] }), reviewState)
     }
   ];
   for (const tool of tools) await document.modelContext.registerTool(tool);
@@ -185,10 +241,10 @@ async function registerV03Tools() {
 
 function observeBaseApp() {
   injectStudio();
-  document.querySelector('#household-form')?.addEventListener('submit', () => setTimeout(() => fetchResult().catch(console.error), 120));
-  document.querySelector('#load-demo')?.addEventListener('click', () => setTimeout(() => fetchResult().catch(console.error), 80));
-  document.addEventListener('change', (event) => {
-    if (event.target.matches?.('[data-evidence]')) { syncPreparedFromPassportLocker(); if (latestResult) renderStudio(); }
+  window.addEventListener('benefitbridge:result', (event) => { if (event.detail?.ok) setLatestResult(event.detail); });
+  window.addEventListener('benefitbridge:evidence-changed', (event) => {
+    preparedEvidence = new Set(Array.isArray(event.detail) ? event.detail.filter((id) => typeof id === 'string').slice(0, 20) : []);
+    if (latestResult) { resetReview(); renderStudio(); }
   });
   const observer = new MutationObserver(() => {
     if (!latestResult && !document.querySelector('#passport-panel')?.classList.contains('hidden')) fetchResult().catch(console.error);
