@@ -1,0 +1,33 @@
+name: Benefit Bridge launch checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - feat/benefit-bridge-webmcp
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Deterministic tests and smoke
+        run: npm run check
+      - name: Syntax checks
+        run: |
+          node --check public/app.js
+          node --check public/packet-core.js
+          node --check public/v03.js
+          node --check public/v03-simulator.js
+          node --check netlify/functions/evaluate.mjs
+      - name: Authority-boundary guard
+        shell: bash
+        run: |
+          if grep -RniE "registerTool.*(submit|sign|authenticate|upload_to_authority)|name:[[:space:]]*['\"]?(submit_application|sign_application|authenticate_as_user|upload_to_authority)" public; then
+            echo "Consequential authority tool detected."
+            exit 1
+          fi
+          echo "No submit/sign/authenticate/upload-to-authority WebMCP tools detected."
