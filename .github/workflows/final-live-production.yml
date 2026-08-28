@@ -1,0 +1,70 @@
+name: Final live production acceptance
+
+on:
+  pull_request:
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wait for citizen production deploy
+        shell: bash
+        run: |
+          URL="https://public-service-passport.netlify.app"
+          echo "URL=$URL" >> "$GITHUB_ENV"
+          rm -f page.html headers.txt
+          for i in {1..40}; do
+            if curl -fsS -D headers.txt "$URL" -o page.html && grep -q "Welche Unterstützung könnte Ihrer Familie zustehen" page.html; then
+              echo "Citizen production is live."
+              break
+            fi
+            sleep 5
+          done
+          grep -q "Welche Unterstützung könnte Ihrer Familie zustehen" page.html
+          grep -q "So funktioniert es" page.html
+          grep -q "Technische Details & WebMCP-Nachweis" page.html
+          grep -qi '^content-security-policy:.*script-src.*self' headers.txt
+          grep -qi '^x-frame-options: *DENY' headers.txt
+          grep -qi '^x-content-type-options: *nosniff' headers.txt
+      - name: Exercise real production API
+        shell: bash
+        run: |
+          cat > household.json <<'JSON'
+          {"household":{"adults":1,"singleParent":true,"children":[{"age":7},{"age":12}],"monthlyGrossIncome":2000,"warmRent":1100,"receivesKindergeld":true,"city":"Berlin"}}
+          JSON
+          curl -fsS -H 'content-type: application/json' --data-binary @household.json "$URL/api/evaluate" -o result.json
+          node - <<'NODE'
+          const fs = require('fs');
+          const r = JSON.parse(fs.readFileSync('result.json','utf8'));
+          if (!r.ok) throw new Error('Berlin production result not ok');
+          if (r.summary.knownMonthly !== 518) throw new Error(`knownMonthly ${r.summary.knownMonthly}`);
+          if (r.summary.potentialAdditionalMax !== 594) throw new Error(`potentialAdditionalMax ${r.summary.potentialAdditionalMax}`);
+          if (r.benefits.find(x=>x.id==='wohngeld').monthlyAmount !== null) throw new Error('Wohngeld amount must remain unguessed');
+          if (!r.boundary.includes('keine Behördenentscheidung')) throw new Error('Citizen boundary missing');
+          console.log(r.summary.headline, r.traceId);
+          NODE
+
+          CODE=$(curl -sS -o hamburg.json -w '%{http_code}' -H 'content-type: application/json' --data '{"household":{"adults":1,"children":[{"age":7}],"monthlyGrossIncome":1600,"warmRent":900,"receivesKindergeld":true,"city":"Hamburg"}}' "$URL/api/evaluate")
+          test "$CODE" = "400"
+          grep -q 'aktuell nur Berlin' hamburg.json
+
+          CODE=$(curl -sS -o wrong-type.json -w '%{http_code}' -H 'content-type: text/plain' --data '{}' "$URL/api/evaluate")
+          test "$CODE" = "415"
+
+          python3 - <<'PY'
+          import json
+          with open('oversize.json','w') as f:
+              json.dump({'household': {'adults':1,'children':[{'age':7}],'monthlyGrossIncome':1600,'warmRent':900,'receivesKindergeld':True,'city':'Berlin'}, 'padding':'x'*40000}, f)
+          PY
+          CODE=$(curl -sS -o oversize-response.json -w '%{http_code}' -H 'content-type: application/json' --data-binary @oversize.json "$URL/api/evaluate")
+          test "$CODE" = "413"
+      - name: Exercise deployed browser runtime under CSP
+        shell: bash
+        run: |
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME"
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=7000 --dump-dom "$URL" > rendered.html
+          grep -q "Unterstützung prüfen" rendered.html
+          grep -q "WebMCP · 11 read-only tools" rendered.html
+          grep -q "Technische Details & WebMCP-Nachweis" rendered.html
