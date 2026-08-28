@@ -1,0 +1,1 @@
+Release code is CI-green. Native WebMCP must be verified in a WebMCP-enabled Chrome browser before claiming native runtime verification.
