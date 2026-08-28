@@ -167,6 +167,8 @@ legend, .children-title > span, .field-row label > span { display: block; margin
 .final-cta p { max-width: 760px; color: var(--muted); line-height: 1.55; }
 footer { width: min(1180px, calc(100% - 40px)); margin: 70px auto 0; padding: 24px 0 34px; display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: .78rem; }
 
+.hero > *, .workspace > *, .proof-grid > *, .case-grid > *, .benefits > *, .two-col > *, .privacy-split > *, .predicate-list > *, .section-head > * { min-width: 0; }
+
 :focus-visible { outline: 3px solid #6fa985; outline-offset: 3px; }
 
 @media (max-width: 1000px) {
@@ -178,16 +180,24 @@ footer { width: min(1180px, calc(100% - 40px)); margin: 70px auto 0; padding: 24
 
 @media (max-width: 640px) {
   .shell, .topbar, footer { width: min(100% - 24px, 1180px); }
-  .topbar { min-height: 64px; }
+  .topbar { min-height: 64px; gap: 8px; flex-wrap: wrap; padding: 8px 0; }
+  .brand { min-width: 0; }
+  .brand > span:last-child { overflow-wrap: anywhere; }
+  .topbar-meta { flex: none; min-width: 0; }
   .topbar-meta > span:last-child { display: none; }
   .hero { padding: 42px 0; gap: 24px; }
   h1 { font-size: clamp(2.45rem, 14vw, 4rem); }
   .case-grid, .benefits, .two-col, .predicate-list, .privacy-split, .field-row, .safety-grid { grid-template-columns: 1fr; }
   .case-card { min-height: 90px; }
   .form-panel, .result-panel, .proof-main, .rail-proof { padding: 19px; border-radius: 17px; }
-  .section-head { align-items: flex-start; }
+  .section-head { align-items: flex-start; flex-wrap: wrap; }
+  .state { max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
   .proof-heading { display: block; }
   .proof-heading .state { margin-top: 10px; }
   .final-cta, footer { flex-direction: column; align-items: flex-start; }
   .request-row { align-items: flex-start; flex-direction: column; }
+  .rail-facts div { flex-wrap: wrap; align-items: flex-start; }
+  .rail-facts dd { max-width: 100%; overflow-wrap: anywhere; text-align: left; }
+  .button, .signal, code { max-width: 100%; overflow-wrap: anywhere; }
+  .benefit-head { flex-wrap: wrap; }
 }

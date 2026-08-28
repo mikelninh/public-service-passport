@@ -9,6 +9,27 @@ async function text(page, selector) {
   return (await page.locator(selector).innerText()).trim();
 }
 
+async function overflowDiagnostics(page) {
+  return page.evaluate(() => {
+    const width = document.documentElement.clientWidth;
+    return [...document.querySelectorAll('body *')]
+      .map((element) => {
+        const rect = element.getBoundingClientRect();
+        return {
+          tag: element.tagName.toLowerCase(),
+          id: element.id || null,
+          className: typeof element.className === 'string' ? element.className.slice(0, 120) : '',
+          text: (element.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 80),
+          left: Math.round(rect.left),
+          right: Math.round(rect.right),
+          width: Math.round(rect.width)
+        };
+      })
+      .filter((item) => item.right > width + 1 || item.left < -1)
+      .slice(0, 12);
+  });
+}
+
 async function runViewport(browser, name, viewport) {
   const context = await browser.newContext({ viewport });
   const page = await context.newPage();
@@ -57,7 +78,11 @@ async function runViewport(browser, name, viewport) {
       scrollWidth: document.documentElement.scrollWidth,
       clientWidth: document.documentElement.clientWidth
     }));
-    assert(overflow.scrollWidth <= overflow.clientWidth + 1, `${name}: horizontal overflow ${overflow.scrollWidth} > ${overflow.clientWidth}`);
+    const offenders = overflow.scrollWidth > overflow.clientWidth + 1 ? await overflowDiagnostics(page) : [];
+    assert(
+      overflow.scrollWidth <= overflow.clientWidth + 1,
+      `${name}: horizontal overflow ${overflow.scrollWidth} > ${overflow.clientWidth}; offenders=${JSON.stringify(offenders)}`
+    );
 
     const ctaBox = await page.locator('#v1-submit').boundingBox();
     assert(ctaBox && ctaBox.width >= 44 && ctaBox.height >= 44, `${name}: primary CTA must remain touch-usable`);
