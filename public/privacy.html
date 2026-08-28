@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Datenschutz- und Datenfluss-Hinweise für den Public Service Passport v1.0 RC1 Public Test." />
+  <title>Datenschutz & Datenfluss — Public Service Passport</title>
+  <link rel="stylesheet" href="/v1.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Zurück zum Public Service Passport"><span class="brand-mark" aria-hidden="true">P</span><span>Public Service Passport</span></a>
+    <div class="topbar-meta"><span class="version">v1.0 RC1 · Public Test</span></div>
+  </header>
+  <main class="shell safety">
+    <p class="eyebrow">DATENSCHUTZ · PUBLIC TEST</p>
+    <h1 style="font-size:clamp(2.6rem,6vw,4.8rem)">Welche Daten fließen wohin?</h1>
+    <p class="lede">Die Testversion soll nützlich sein, ohne so zu tun, als wäre sie bereits ein Behördenportal. Deshalb halten wir den Datenfluss so klein und sichtbar wie möglich.</p>
+
+    <div class="safety-grid">
+      <article><strong>Leistungs-Check</strong><p>Haushaltsgröße, Kinderalter, Bruttoeinkommen, Warmmiete und der angegebene Kindergeldstatus werden an den eigenen Auswertungs-Endpunkt dieser Website geschickt, damit der Orientierungs-Check berechnet werden kann. Die Anwendung speichert diese Werte dort nicht dauerhaft.</p></article>
+      <article><strong>Keine Identität nötig</strong><p>Für den öffentlichen Test werden kein Name, keine Anschrift, keine E-Mail-Adresse, keine IBAN und keine Dokumente verlangt. Bitte geben Sie solche Daten auch nicht in Feedback ein.</p></article>
+      <article><strong>Lokales Speichern</strong><p>Nur wenn Sie ausdrücklich auf „In diesem Browser speichern“ klicken, wird der Haushalt im lokalen Browserspeicher abgelegt. Sie können ihn dort wieder löschen.</p></article>
+      <article><strong>Behördenvorschau</strong><p>Wenn Sie die Behördenansicht Ihres Testfalls öffnen, wird der Fall als kurzlebiger lokaler Einmal-Handoff im Browser abgelegt. Die Authority-Sandbox liest ihn einmal und löscht ihn direkt wieder. Es erfolgt keine Behördenübermittlung.</p></article>
+    </div>
+
+    <section class="panel proof-main" style="margin-top:24px">
+      <p class="mini-label">OPENPROOF / MIDNIGHT</p>
+      <h2>Keine privaten Haushaltsdaten werden in dieser Public-Test-Version auf Midnight geschrieben.</h2>
+      <p class="muted">Die sichtbare Midnight-Demonstration ist Infrastruktur-Evidence aus einem synthetischen lokalen ZK-End-to-End-Test. Ein echter Bürgerfall wird erst dann „kryptografisch verifiziert“ genannt, wenn ein offizieller Aussteller und ein vertrauenswürdiger Indexer-Verifikationspfad existieren.</p>
+    </section>
+
+    <section class="panel proof-main" style="margin-top:16px">
+      <p class="mini-label">HOSTING</p>
+      <h2>Technische Server-Logs sind vom Anwendungsdatensatz zu unterscheiden.</h2>
+      <p class="muted">Wie bei gewöhnlichem Webhosting kann der Hosting-Anbieter technische Request-/Sicherheitsdaten verarbeiten. Diese Testanwendung baut daraus kein Bürgerprofil und benötigt für die Nutzung kein Benutzerkonto.</p>
+    </section>
+
+    <section class="final-cta">
+      <div><p class="eyebrow">FEEDBACK</p><h2>Bitte keine persönlichen Falldaten posten.</h2><p>Für Feedback reichen Aussagen wie „Ich wusste danach, was ich als Nächstes tun soll“ oder „Die Unterscheidung zwischen Richtwert und Anspruch war unklar“. Für technische Rückmeldungen ist das GitHub-Projekt verlinkt.</p></div>
+      <div class="result-actions"><a class="button secondary" href="/">Zurück zum Test</a><a class="button secondary" href="https://github.com/mikelninh/public-service-passport/issues" target="_blank" rel="noreferrer">Technisches Feedback ↗</a></div>
+    </section>
+  </main>
+  <footer><span>Public Service Passport · v1.0 RC1 Public Test</span><span><a href="/">Bürgeransicht</a> · <a href="/authority.html">Behörden-Sandbox</a> · <a href="/pilot.html">100-Fälle-Pilot</a></span></footer>
+</body>
+</html>
