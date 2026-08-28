@@ -22,7 +22,8 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
-  const requested = req.url === '/' ? '/index.html' : (req.url || '/index.html').split('?')[0];
+  const pathOnly = (req.url || '/').split('?')[0];
+  const requested = pathOnly === '/' || pathOnly === '/try' ? '/v1.html' : pathOnly;
   const safe = normalize(requested).replace(/^([.][.][/\\])+/, '');
   const file = join(root, safe);
   if (!file.startsWith(root)) {
@@ -37,4 +38,4 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(port, () => console.log(`Benefit Bridge dev server: http://localhost:${port}`));
+server.listen(port, () => console.log(`Public Service Passport v1 dev server: http://localhost:${port}`));

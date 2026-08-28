@@ -15,6 +15,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Install pinned test dependencies
+        run: npm install --ignore-scripts
       - name: Deterministic, golden and adversarial tests
         run: npm run check
       - name: Syntax checks
@@ -25,6 +27,7 @@ jobs:
           node --check public/v03-simulator.js
           node --check public/v1.js
           node --check public/openproof-verifier.js
+          node --check tests/browser-v1.mjs
           node --check netlify/functions/evaluate.mjs
       - name: Authority-boundary guard
         shell: bash
@@ -41,3 +44,24 @@ jobs:
           grep -q "Infrastruktur-Evidence, nicht ein Nachweis über Sie" public/v1.html
           grep -q "Kein Anspruchsbescheid" public/v1.html
           echo "Citizen trust boundaries are visible."
+      - name: Install Chromium for release browser QA
+        run: npx playwright install --with-deps chromium
+      - name: Desktop + 390px mobile release browser QA
+        shell: bash
+        run: |
+          node scripts/dev-server.mjs >/tmp/psp-v1-server.log 2>&1 &
+          server_pid=$!
+          trap 'kill $server_pid 2>/dev/null || true' EXIT
+          ready=0
+          for i in {1..30}; do
+            if curl -fsS http://127.0.0.1:8888/ >/dev/null; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" != 1 ]; then
+            cat /tmp/psp-v1-server.log
+            exit 1
+          fi
+          npm run test:browser
