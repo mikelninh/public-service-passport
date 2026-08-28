@@ -59,24 +59,57 @@ jobs:
           PY
           CODE=$(curl -sS -o oversize-response.json -w '%{http_code}' -H 'content-type: application/json' --data-binary @oversize.json "$URL/api/evaluate")
           test "$CODE" = "413"
-      - name: Exercise deployed browser runtime under CSP
+      - name: Exercise real citizen flow in deployed browser
         shell: bash
         run: |
           CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
           test -n "$CHROME"
           "$CHROME" --version
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=7000 --dump-dom "$URL" > rendered.html
-          # These nodes are created dynamically by app.js and v03.js. Their presence
-          # proves the deployed modules executed under the production CSP.
-          grep -q 'class="child-row"' rendered.html
-          grep -q 'id="application-studio"' rendered.html
-          grep -q "Unterstützung prüfen" rendered.html
-          grep -q "Technische Details & WebMCP-Nachweis" rendered.html
-          # Native WebMCP discovery is a separate capability test requiring a
-          # WebMCP-enabled browser. Record the status if this runner exposes it,
-          # but do not conflate an ordinary headless Chrome with that test lane.
-          if grep -q "WebMCP · 11 read-only tools" rendered.html; then
-            echo "Runner browser exposed the full WebMCP status."
-          else
-            echo "Runner browser does not expose enabled WebMCP; dynamic app runtime still passed."
-          fi
+          npm install --no-save --no-package-lock puppeteer-core@latest >/dev/null 2>&1
+          CHROME="$CHROME" node - <<'NODE'
+          const puppeteer = require('puppeteer-core');
+          (async () => {
+            const browser = await puppeteer.launch({ executablePath: process.env.CHROME, headless: true, args: ['--no-sandbox','--disable-gpu'] });
+            const page = await browser.newPage();
+            const consoleErrors = [];
+            const pageErrors = [];
+            page.on('console', msg => { if (msg.type() === 'error') consoleErrors.push(msg.text()); });
+            page.on('pageerror', err => pageErrors.push(err.message));
+            const response = await page.goto(process.env.URL, { waitUntil: 'networkidle2', timeout: 30000 });
+            if (!response || response.status() !== 200) throw new Error(`page status ${response?.status()}`);
+            await new Promise(r => setTimeout(r, 1200));
+            const initial = await page.evaluate(() => ({
+              h1: document.querySelector('h1')?.textContent.trim(),
+              childRows: document.querySelectorAll('.child-row').length,
+              studio: Boolean(document.querySelector('#application-studio')),
+              webStatus: document.querySelector('#webmcp-status')?.textContent.trim(),
+              formButton: document.querySelector('#evaluate-button')?.textContent.trim()
+            }));
+            console.log('initial', initial);
+            if (!initial.h1?.includes('Welche Unterstützung')) throw new Error('citizen H1 missing');
+            if (initial.childRows !== 2) throw new Error(`expected 2 child rows, got ${initial.childRows}`);
+            if (!initial.studio) throw new Error('Application Studio module did not execute');
+            if (!initial.formButton?.includes('Unterstützung prüfen')) throw new Error('citizen CTA missing');
+
+            await page.click('#evaluate-button');
+            await page.waitForFunction(() => !document.querySelector('#result-content')?.classList.contains('hidden'), { timeout: 15000 });
+            await new Promise(r => setTimeout(r, 500));
+            const result = await page.evaluate(() => ({
+              headline: document.querySelector('#summary-headline')?.textContent.trim(),
+              passportVisible: !document.querySelector('#passport-panel')?.classList.contains('hidden'),
+              applicationVisible: !document.querySelector('#application-studio')?.classList.contains('hidden'),
+              webStatus: document.querySelector('#webmcp-status')?.textContent.trim()
+            }));
+            console.log('after submit', result);
+            if (!result.headline?.includes('€518/Monat')) throw new Error(`unexpected citizen result: ${result.headline}`);
+            if (!result.passportVisible) throw new Error('passport did not become visible');
+            if (!result.applicationVisible) throw new Error('application studio did not become visible');
+
+            if (pageErrors.length || consoleErrors.length) {
+              console.log('pageErrors', pageErrors);
+              console.log('consoleErrors', consoleErrors);
+              throw new Error('browser reported runtime errors');
+            }
+            await browser.close();
+          })().catch(error => { console.error(error); process.exit(1); });
+          NODE
