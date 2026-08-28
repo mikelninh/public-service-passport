@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="Synthetic authority sandbox showing how a Public Service Passport case can move from verified facts to decision and payment." />
+  <title>Behörden-Sandbox — Public Service Passport</title>
+  <link rel="stylesheet" href="/authority.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/">Public Service Passport</a>
+    <div class="sandbox-badge">SYNTHETISCHE SANDBOX · KEINE ECHTE BEHÖRDE</div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">AUTHORITY WORKBENCH · OPENACTION / OPENPROOF</p>
+        <h1>Vom vollständigen Antrag bis zur Auszahlung.</h1>
+        <p class="lead">Die Behörde soll nicht noch einmal alles abtippen und prüfen. Sie bekommt einen strukturierten Fall, sieht sofort, was wirklich verifiziert ist, und bearbeitet nur die offenen Ausnahmen.</p>
+      </div>
+      <aside class="principle-card">
+        <strong>Die Grenze bleibt klar</strong>
+        <p>Agenten und Software dürfen vorbereiten, prüfen und routen. Die zuständige Behörde entscheidet. Das Fach-/Finanzsystem der Behörde zahlt aus.</p>
+      </aside>
+    </section>
+
+    <section class="flow-strip" aria-label="End-to-End Prozess">
+      <span>Bürger / Agent</span><b>→</b>
+      <span>Proofs</span><b>→</b>
+      <span>Behörden-Inbox</span><b>→</b>
+      <span>Entscheidung</span><b>→</b>
+      <span>Auszahlung</span><b>→</b>
+      <span>Konto</span>
+    </section>
+
+    <section class="scenario-panel">
+      <div>
+        <p class="label">FALL AUSWÄHLEN</p>
+        <h2>Was passiert bei sauberen und problematischen Fällen?</h2>
+      </div>
+      <div class="scenario-grid" id="scenarioGrid">
+        <button class="scenario active" data-scenario="clean">
+          <strong>Sauberer Fast Path</strong>
+          <span>Alle Proofs gültig</span>
+        </button>
+        <button class="scenario" data-scenario="missing_income">
+          <strong>Nachweis fehlt</strong>
+          <span>Einkommen nur angegeben</span>
+        </button>
+        <button class="scenario" data-scenario="rent_conflict">
+          <strong>Widerspruch</strong>
+          <span>Miete passt nicht zusammen</span>
+        </button>
+        <button class="scenario" data-scenario="expired_identity">
+          <strong>Proof abgelaufen</strong>
+          <span>Identität neu prüfen</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="metrics" aria-label="Fallmetriken">
+      <article><span>Source-verifiziert</span><strong id="verifiedRatio">—</strong></article>
+      <article><span>Automatische Checks</span><strong id="autoChecks">0</strong></article>
+      <article><span>Offene Ausnahmen</span><strong id="exceptionCount">—</strong></article>
+      <article><span>Manuelle Prüfschritte</span><strong id="manualTouches">0</strong></article>
+    </section>
+
+    <section class="workspace">
+      <article class="citizen-pane pane">
+        <div class="pane-head">
+          <div>
+            <p class="label">BÜRGERANSICHT</p>
+            <h2>Mein Antrag</h2>
+          </div>
+          <span class="status-pill" id="citizenStatus">Eingegangen</span>
+        </div>
+
+        <div class="citizen-card">
+          <strong>Mara Beispiel</strong>
+          <span>Alleinerziehend · 2 Kinder · Berlin</span>
+          <span>Kinderzuschlag · synthetischer Fall</span>
+        </div>
+
+        <ol class="timeline" id="citizenTimeline"></ol>
+
+        <div class="money-card" id="moneyCard">
+          <span>Bewilligter Betrag</span>
+          <strong id="moneyAmount">Noch keine Entscheidung</strong>
+          <small>Ein Betrag erscheint erst nach einer simulierten Behördenentscheidung.</small>
+        </div>
+      </article>
+
+      <article class="authority-pane pane">
+        <div class="pane-head">
+          <div>
+            <p class="label">BEHÖRDENANSICHT</p>
+            <h2>Was muss ich wirklich prüfen?</h2>
+          </div>
+          <span class="status-pill" id="authorityStatus">Eingegangen</span>
+        </div>
+
+        <div class="case-summary">
+          <div><span>Fall</span><strong id="caseId">—</strong></div>
+          <div><span>Transport</span><strong id="transportReceipt">—</strong></div>
+          <div><span>Szenario</span><strong id="scenarioLabel">—</strong></div>
+        </div>
+
+        <section class="proof-section">
+          <div class="section-head">
+            <h3>Entscheidungsrelevante Fakten</h3>
+            <span>Quelle + Vertrauensstufe bleiben sichtbar</span>
+          </div>
+          <div class="proof-list" id="proofList"></div>
+        </section>
+
+        <section class="exception-box" id="exceptionBox">
+          <div class="section-head">
+            <h3>Offene Punkte</h3>
+            <span>Nur Ausnahmen gehen an einen Menschen</span>
+          </div>
+          <div id="exceptions">Preflight noch nicht gestartet.</div>
+        </section>
+
+        <div class="actions">
+          <button class="primary" id="nextAction">Automatischen Preflight starten</button>
+          <button class="secondary" id="rejectAction" hidden>Ablehnung simulieren</button>
+          <button class="ghost" id="resetAction">Fall zurücksetzen</button>
+        </div>
+        <p class="action-note" id="actionNote">Keine Aktion übermittelt Daten an eine echte Behörde oder Bank.</p>
+      </article>
+    </section>
+
+    <section class="ledger-section">
+      <div class="section-head ledger-head">
+        <div>
+          <p class="label">OPENACTION RECEIPTS</p>
+          <h2>Jede grüne Stufe braucht einen Beleg.</h2>
+        </div>
+        <p>„Abgeschickt“, „eingegangen“, „bewilligt“ und „ausgezahlt“ sind unterschiedliche Zustände. Deshalb bekommt jeder Übergang einen eigenen Receipt/Event.</p>
+      </div>
+      <div class="ledger" id="eventLedger"></div>
+    </section>
+
+    <section class="why-section">
+      <p class="label">WARUM DAS SCHNELLER IST</p>
+      <h2>Die Behörde prüft Ausnahmen — nicht jedes Feld von vorn.</h2>
+      <div class="why-grid">
+        <article><strong>1</strong><h3>Strukturiert statt PDF-Rätsel</h3><p>Fachwerte, Proofs und Herkunft kommen maschinenlesbar an.</p></article>
+        <article><strong>2</strong><h3>Proofs statt blindem Vertrauen</h3><p>Selbstangabe, Dokument und echte Source-Verifikation werden nicht vermischt.</p></article>
+        <article><strong>3</strong><h3>Fast Path + Exception Path</h3><p>Saubere Fälle werden entscheidungsbereit. Menschen sehen nur echte Konflikte.</p></article>
+        <article><strong>4</strong><h3>Bis zum Konto sichtbar</h3><p>Entscheidung, Zahlungsanweisung, Versand und Settlement bleiben getrennt nachvollziehbar.</p></article>
+      </div>
+    </section>
+
+    <section class="boundary">
+      <strong>Was diese Sandbox nicht behauptet</strong>
+      <p>Sie simuliert Behördenprüfung, Entscheidung und Auszahlung mit synthetischen Daten. Eine reale Integration braucht ein akzeptiertes Fachdatenschema, Authentisierung, einen offiziellen Übertragungskanal, Behördenfreigabe sowie die Anbindung an das echte Fach- und Finanzsystem.</p>
+      <a href="/">← Zur Bürgeransicht</a>
+    </section>
+  </main>
+
+  <script type="module" src="/authority.js"></script>
+</body>
+</html>
