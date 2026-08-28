@@ -157,7 +157,7 @@ function approveExport() {
 
 function exportPacket() {
   if (!latestPacket?.humanReview) return;
-  const bundle = { exportedAt: new Date().toISOString(), product: 'Benefit Bridge v0.3', packet: latestPacket, explicitBoundary: 'LOCAL EXPORT ONLY — NOT SUBMITTED TO ANY AUTHORITY' };
+  const bundle = { exportedAt: new Date().toISOString(), product: 'Benefit Bridge v0.4', packet: latestPacket, explicitBoundary: 'LOCAL EXPORT ONLY — NOT SUBMITTED TO ANY AUTHORITY' };
   const blob = new Blob([JSON.stringify(bundle, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `benefit-bridge-${latestPacket.service}-${latestPacket.packetId}.json`; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }

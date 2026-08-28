@@ -1,0 +1,1 @@
+Production QA is tracked in `PRODUCTION_QA.md`; native WebMCP verification is intentionally only claimed after `document.modelContext.getTools()` succeeds in a WebMCP-enabled Chrome browser.
