@@ -102,8 +102,10 @@
           </div>
           <div class="result-actions">
             <button id="v1-download" type="button" class="button secondary">Checkliste herunterladen</button>
+            <button id="v1-authority-preview" type="button" class="button ghost">Diesen Testfall aus Behördensicht ansehen →</button>
             <a class="button ghost" href="/index.html#passport-panel">Antrag-Entwurf testen</a>
           </div>
+          <p class="fineprint">Behördenvorschau: Der Fall wird nur für diesen Test kurz lokal im Browser übergeben, beim Öffnen einmal gelesen und wieder gelöscht. Es wird nichts an eine Behörde gesendet.</p>
         </div>
       </div>
     </section>
@@ -156,11 +158,16 @@
 
     <section class="shell final-cta">
       <div><p class="eyebrow">PUBLIC PILOT</p><h2>Hilft Ihnen das, schneller zu verstehen, was Sie tun können?</h2><p>Der nächste Schritt für v1.x ist nicht „mehr AI“, sondern mehr echte Leistungen, bessere amtliche Datenquellen und offizielle Nachweise, die sich mit minimaler Offenlegung wiederverwenden lassen.</p></div>
-      <a class="button secondary" href="https://github.com/mikelninh/public-service-passport" target="_blank" rel="noreferrer">Projekt & Feedback ↗</a>
+      <div class="result-actions">
+        <a class="button secondary" href="/authority.html">Behörden-Sandbox</a>
+        <a class="button secondary" href="/pilot.html">100-Fälle-Pilot</a>
+        <a class="button secondary" href="https://github.com/mikelninh/public-service-passport" target="_blank" rel="noreferrer">Projekt & Feedback ↗</a>
+      </div>
     </section>
   </main>
 
   <footer><span>Public Service Passport · v1.0 Public Pilot</span><span>Orientierung → Nachweise → menschliche Entscheidung → Behörde</span></footer>
   <script type="module" src="/v1.js"></script>
+  <script type="module" src="/v1-handoff.js"></script>
 </body>
 </html>
