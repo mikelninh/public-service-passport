@@ -255,7 +255,7 @@ export function runSyntheticAuthorityPilot() {
       resolvedToDecisionReady
     },
     proofQuality: {
-      averageInitialSourceVerifiedRatio: sourceVerifiedRatioSum / cases.length
+      averageInitialSourceVerifiedRatio: Number((sourceVerifiedRatioSum / cases.length).toFixed(4))
     },
     outcomes: {
       approvals,
