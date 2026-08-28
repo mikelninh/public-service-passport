@@ -12,6 +12,17 @@
   to = "/.netlify/functions/evaluate"
   status = 200
 
+[[redirects]]
+  from = "/"
+  to = "/v1.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/try"
+  to = "/v1.html"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]

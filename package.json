@@ -1,14 +1,19 @@
 {
   "name": "benefit-bridge-webmcp",
-  "version": "0.4.0",
+  "version": "1.0.0-rc.1",
   "private": true,
   "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "node scripts/dev-server.mjs",
     "test": "node --test tests/*.test.mjs",
-    "check": "npm test && node scripts/smoke.mjs",
+    "test:browser": "node tests/browser-v1.mjs",
+    "test:journey": "node tests/browser-journey.mjs",
+    "check": "npm test && node scripts/smoke.mjs && node --check public/v1.js && node --check public/openproof-verifier.js && node --check public/case-handoff.js && node --check public/citizen-authority-case.js && node --check public/v1-handoff.js && node --check public/authority-handoff.js",
     "pilot": "node scripts/run-authority-pilot.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.57.0"
   },
   "engines": { "node": ">=20" }
 }
