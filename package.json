@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "node scripts/dev-server.mjs",
     "test": "node --test tests/*.test.mjs",
-    "check": "npm test && node scripts/smoke.mjs"
+    "check": "npm test && node scripts/smoke.mjs",
+    "pilot": "node scripts/run-authority-pilot.mjs"
   },
   "engines": { "node": ">=20" }
 }

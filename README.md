@@ -8,7 +8,9 @@ A working Berlin pilot that helps families understand possible public benefits, 
 
 👉 **Authority sandbox:** https://public-service-passport.netlify.app/authority.html
 
-The Authority Workbench is an explicitly synthetic proof showing the same kind of case moving through verified facts → authority preflight → exception handling → decision → payment instruction → settlement → reconciliation. It does not connect to a real authority or bank.
+👉 **100-case authority pilot:** https://public-service-passport.netlify.app/pilot.html
+
+The Authority Workbench and 100-case pilot are explicitly synthetic proofs. They demonstrate verified facts → authority preflight → exception handling → decision → payment instruction → settlement → reconciliation, but do not connect to a real authority or bank.
 
 ## Why this exists
 
@@ -120,11 +122,35 @@ received_by_authority
 
 Each important transition creates an inspectable synthetic event/receipt. The full architecture is documented in [`docs/AUTHORITY_RAIL.md`](docs/AUTHORITY_RAIL.md) and the machine-readable handoff contract is in [`schemas/authority-case-bundle.schema.json`](schemas/authority-case-bundle.schema.json).
 
+## 100-case authority pilot
+
+The controlled pilot runs **100 deterministic synthetic cases** through the same authority state machine. Every case has a route and exact exception-code ground truth defined before execution.
+
+Current CI result:
+
+- **100 cases**
+- **40 initial Fast Path / 60 Exception Path**
+- **100% route accuracy** against the controlled ground truth
+- **100% exception-code accuracy**
+- **87% average source-verified claim coverage on arrival** by cohort design
+- **93 synthetic approvals / 7 synthetic rejections**
+- **93/93 approvals settled and reconciled**
+- **7/7 rejected payment attempts blocked**
+
+The pilot also exposes an illustrative workload model: 500 baseline manual touches vs. 160 modeled touches, or **68% fewer**. This is **not measured authority impact**; it is the output of an explicit assumption model for this synthetic cohort. See [`docs/AUTHORITY_PILOT_100.md`](docs/AUTHORITY_PILOT_100.md).
+
+Reproduce it with:
+
+```bash
+npm run pilot
+npm run pilot -- --json
+```
+
 ## Proof, not just claims
 
 The current release has been tested at multiple layers:
 
-- **55/55 deterministic, integration, adversarial and authority-flow tests passing**
+- **64/64 deterministic, integration, adversarial, authority-flow and 100-case-pilot tests passing**
 - happy-path household → benefits → passport → application packet → human review
 - KiZ, Wohngeld and Bildung & Teilhabe preparation flows
 - malformed JSON and wrong HTTP methods/content types
@@ -137,6 +163,7 @@ The current release has been tested at multiple layers:
 - zero-submit authority-boundary guard
 - authority decision/payment transition guards
 - clean fast path + missing/conflicting/expired proof exception paths
+- 100-case controlled ground-truth routing and payout-integrity run in CI
 - responsive desktop + 390 px mobile browser QA
 - native Chrome WebMCP discovery: **11/11 tools, all read-only**
 - external production browser run against the public Netlify deployment
@@ -160,12 +187,17 @@ Public Service Passport
    └─ application preparation
 
 Synthetic authority proof
-└─ Authority Workbench
-   ├─ claim verification tiers
-   ├─ automatic preflight
-   ├─ exception routing
-   ├─ decision receipt
-   └─ payment / settlement / reconciliation states
+├─ Authority Workbench
+│  ├─ claim verification tiers
+│  ├─ automatic preflight
+│  ├─ exception routing
+│  ├─ decision receipt
+│  └─ payment / settlement / reconciliation states
+└─ Authority Pilot 100
+   ├─ controlled ground-truth cohort
+   ├─ exception-code evaluation
+   ├─ payment integrity evaluation
+   └─ transparent workload model
 
 Future production directions
 ├─ official identity / register proofs
@@ -184,17 +216,21 @@ Final entitlement, all binding decisions and real payments remain with the respo
 npm run dev
 # http://localhost:8888
 # http://localhost:8888/authority.html
+# http://localhost:8888/pilot.html
 ```
 
 ## Verify
 
 ```bash
 npm run check
+npm run pilot
 node --check public/app.js
 node --check public/packet-core.js
 node --check public/v03.js
 node --check public/authority-core.js
 node --check public/authority.js
+node --check public/pilot-core.js
+node --check public/pilot.js
 node --check netlify/functions/evaluate.mjs
 ```
 
