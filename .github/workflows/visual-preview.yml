@@ -1,0 +1,40 @@
+name: Visual preview QA
+
+on:
+  pull_request:
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wait for Netlify deploy preview
+        shell: bash
+        run: |
+          URL="https://deploy-preview-${{ github.event.pull_request.number }}--public-service-passport.netlify.app"
+          echo "URL=$URL" >> "$GITHUB_ENV"
+          for i in {1..20}; do
+            if curl -fsS "$URL" -o preview.html; then break; fi
+            sleep 3
+          done
+          test -s preview.html
+          grep -q "Welche Unterstützung könnte Ihrer Familie zustehen" preview.html
+          grep -q "So funktioniert es" preview.html
+          grep -q "Das Problem" preview.html
+          grep -q "Technische Details & WebMCP-Nachweis" preview.html
+      - name: Capture desktop and mobile screenshots
+        shell: bash
+        run: |
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser)"
+          test -n "$CHROME"
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --virtual-time-budget=5000 --window-size=1440,1000 --screenshot=desktop.png "$URL"
+          "$CHROME" --headless --no-sandbox --disable-gpu --hide-scrollbars --virtual-time-budget=5000 --window-size=390,844 --screenshot=mobile.png "$URL"
+          test -s desktop.png
+          test -s mobile.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: citizen-preview-screenshots
+          path: |
+            desktop.png
+            mobile.png
+            preview.html
