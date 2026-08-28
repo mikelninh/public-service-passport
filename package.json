@@ -8,7 +8,8 @@
     "dev": "node scripts/dev-server.mjs",
     "test": "node --test tests/*.test.mjs",
     "test:browser": "node tests/browser-v1.mjs",
-    "check": "npm test && node scripts/smoke.mjs && node --check public/v1.js && node --check public/openproof-verifier.js",
+    "test:journey": "node tests/browser-journey.mjs",
+    "check": "npm test && node scripts/smoke.mjs && node --check public/v1.js && node --check public/openproof-verifier.js && node --check public/case-handoff.js && node --check public/citizen-authority-case.js && node --check public/v1-handoff.js && node --check public/authority-handoff.js",
     "pilot": "node scripts/run-authority-pilot.mjs"
   },
   "devDependencies": {
