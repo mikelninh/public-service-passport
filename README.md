@@ -1,10 +1,29 @@
 # Benefit Bridge 🌉
 
-**The public-benefits website an AI agent can use without inventing authority.**
+**The first working module of a Public Service Passport: tell public services once, then reuse facts and evidence safely.**
 
-Benefit Bridge is a WebMCP challenge proof for agent-native public services. V0.3 adds an **Application Studio** on top of the Benefit Passport: the system can prepare a reviewable application packet with field provenance, evidence bindings, blockers and an explicit human approval gate — without adding an autonomous submit tool.
+Benefit Bridge is a WebMCP challenge proof for agent-native public services. The current working module focuses on German public benefits: household orientation, reusable evidence, a Benefit Passport, and a reviewable Application Studio packet with an explicit human approval boundary.
 
-## V0.3 — From passport to reviewable packet
+## Public Service Passport
+
+Benefit Bridge is the **benefits module** of a broader product direction:
+
+```text
+Public Service Passport
+├─ Benefits                 ← live working proof
+├─ Housing                  ← next
+├─ Family & childcare       ← next
+├─ Health & care admin      ← future
+└─ Identity & documents     ← trust foundation
+```
+
+The intended contract is:
+
+> **collect once → preserve provenance → reuse with permission → prepare safely → human approval → authority decision**
+
+The roadmap labels are intentionally explicit. Only the benefits path is implemented in this challenge build.
+
+## V0.4 — From household to reviewable packet
 
 ```text
 household claims
@@ -42,7 +61,7 @@ Synthetic household: single parent · children 7 + 12 · €2,000 gross/month ·
 
 The Application Studio uses a clearly synthetic local-only applicant (`Mara Beispiel`) for the challenge flow.
 
-## What V0.3 proves
+## Trust model
 
 ### 1. Pre-fill without erasing provenance
 A packet field sourced from the Benefit Passport stays labelled `self_attested_claim`. Local applicant identity/contact data is labelled `local_human_input`. A derived benefit signal is labelled `deterministic_policy`.
@@ -79,7 +98,7 @@ Even after approval, `submissionAllowed` remains **false**.
 10. `prepare_application_packet`
 11. `validate_application_packet`
 
-The human UI and the two packet WebMCP tools share the same browser-local packet core.
+The human UI and packet WebMCP tools share the same underlying application logic.
 
 ## Official-flow grounding
 
@@ -105,28 +124,11 @@ npm run dev
 npm run check
 node --check public/app.js
 node --check public/packet-core.js
+node --check public/v03.js
 node --check netlify/functions/evaluate.mjs
 ```
 
 Current deterministic suite: **17 tests** plus an end-to-end smoke case across household → passport → packet → human review validation.
-
-The suite covers:
-
-- Berlin benefit anchors
-- policy boundaries
-- stable trace/passport/packet IDs
-- claims vs evidence
-- downstream-right conditionality
-- official-flow evidence requirements
-- field provenance
-- blocked vs ready-for-review packet states
-- explicit review confirmations
-- browser-local packet preparation
-- `submissionAllowed === false` after approval
-
-### Verification boundary
-
-Engine, API shape, client packet core, JavaScript syntax and deterministic integration tests are runnable here. Automated Chromium visual E2E is not claimed in the current build environment because the preferred `agent-browser` binary is unavailable here. The app includes an in-page WebMCP contract harness for manual review.
 
 ## Privacy / authority boundary
 
@@ -139,10 +141,10 @@ Engine, API shape, client packet core, JavaScript syntax and deterministic integ
 - export is JSON only; it is **not** sent to an authority
 - no WebMCP tool signs, authenticates, uploads or submits an application
 
-## Why this matters
+## License
 
-Public services often make people repeat facts and then make software pretend that repetition equals certainty. Benefit Bridge explores a different contract:
+MIT — see [`LICENSE`](./LICENSE).
 
-> **collect once → preserve provenance → prepare safely → expose blockers → review explicitly → hand off to the real authority**
+---
 
 Built as a public-interest WebMCP proof by Michael Ninh in Berlin.
