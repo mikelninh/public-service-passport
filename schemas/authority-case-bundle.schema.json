@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mikelninh/public-service-passport/schemas/authority-case-bundle.schema.json",
+  "title": "Public Service Passport Authority-Ready Case Bundle 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "caseId", "service", "applicant", "claims", "evidence", "derivedSignals", "consent", "submission", "decision", "payment"],
+  "properties": {
+    "version": { "const": "psp-authority-bundle/0.1" },
+    "caseId": { "type": "string", "minLength": 1 },
+    "correlationId": { "type": "string", "minLength": 1 },
+    "service": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "jurisdiction"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "jurisdiction": { "type": "string" },
+        "destinationId": { "type": ["string", "null"] },
+        "schemaRef": { "type": ["string", "null"] }
+      }
+    },
+    "applicant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["identityRef", "authenticationLevel"],
+      "properties": {
+        "identityRef": { "type": "string" },
+        "authenticationLevel": { "enum": ["none", "basic", "substantial", "high"] },
+        "identityProvider": { "type": ["string", "null"] }
+      }
+    },
+    "claims": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "value", "verificationTier"],
+        "properties": {
+          "id": { "type": "string" },
+          "value": {},
+          "verificationTier": { "enum": ["self_attested", "document_backed", "source_verified", "authority_verified"] },
+          "proofRef": { "type": ["string", "null"] },
+          "scope": { "type": ["string", "null"] },
+          "validUntil": { "type": ["string", "null"], "format": "date-time" }
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "kind", "source", "status"],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "enum": ["document", "register", "identity", "database", "payment", "authority_receipt", "other"] },
+          "source": { "type": "string" },
+          "status": { "enum": ["missing", "supplied", "verified", "expired", "conflicting"] },
+          "issuer": { "type": ["string", "null"] },
+          "evidenceRef": { "type": ["string", "null"] },
+          "sha256": { "type": ["string", "null"], "pattern": "^[a-fA-F0-9]{64}$" },
+          "signatureRef": { "type": ["string", "null"] },
+          "observedAt": { "type": ["string", "null"], "format": "date-time" },
+          "validUntil": { "type": ["string", "null"], "format": "date-time" },
+          "sensitivity": { "enum": ["public", "internal", "personal", "sensitive", "highly_sensitive"] }
+        }
+      }
+    },
+    "derivedSignals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "policyVersion", "result", "boundary"],
+        "properties": {
+          "id": { "type": "string" },
+          "policyVersion": { "type": "string" },
+          "result": {},
+          "boundary": { "type": "string" }
+        }
+      }
+    },
+    "consent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["purpose", "status"],
+      "properties": {
+        "purpose": { "type": "string" },
+        "status": { "enum": ["not_requested", "pending", "granted", "withdrawn"] },
+        "grantedAt": { "type": ["string", "null"], "format": "date-time" },
+        "receiptRef": { "type": ["string", "null"] }
+      }
+    },
+    "preflight": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schemaValid": { "type": "boolean" },
+        "complete": { "type": "boolean" },
+        "contradictions": { "type": "array", "items": { "type": "string" } },
+        "exceptions": { "type": "array", "items": { "type": "string" } },
+        "sourceVerifiedRatio": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "submission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "route"],
+      "properties": {
+        "status": { "enum": ["draft", "ready_for_user_authorisation", "authorised", "submitted", "received_by_authority", "transport_failed"] },
+        "route": { "enum": ["none", "official_portal", "official_eservice", "fit_connect", "other"] },
+        "submittedAt": { "type": ["string", "null"], "format": "date-time" },
+        "receivedAt": { "type": ["string", "null"], "format": "date-time" },
+        "transportReceiptRef": { "type": ["string", "null"] }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["not_started", "preflighted", "in_review", "ready_for_decision", "approved", "rejected", "revoked"] },
+        "authority": { "type": ["string", "null"] },
+        "decidedAt": { "type": ["string", "null"], "format": "date-time" },
+        "approvalReceiptRef": { "type": ["string", "null"] },
+        "conditions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "payment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status"],
+      "properties": {
+        "status": { "enum": ["not_applicable", "not_started", "instructed", "authorized", "sent", "settled", "reconciled", "failed"] },
+        "amount": { "type": ["number", "null"] },
+        "currency": { "type": ["string", "null"] },
+        "period": { "type": ["string", "null"] },
+        "instructionAt": { "type": ["string", "null"], "format": "date-time" },
+        "settledAt": { "type": ["string", "null"], "format": "date-time" },
+        "paymentReceiptRef": { "type": ["string", "null"] }
+      }
+    }
+  }
+}
