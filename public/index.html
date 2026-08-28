@@ -1,178 +1,160 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="Benefit Bridge — the first working module of a Public Service Passport, using WebMCP for reusable evidence, source-linked rules and safe agent-native public services." />
-  <title>Benefit Bridge — Public Service Passport + WebMCP</title>
+  <meta name="description" content="Public Service Passport hilft Berliner Familien, mögliche Leistungen zu verstehen, Unterlagen vorzubereiten und Angaben sicher wiederzuverwenden." />
+  <title>Public Service Passport — Leistungen einfacher verstehen</title>
   <link rel="stylesheet" href="/styles.css" />
   <link rel="stylesheet" href="/passport.css" />
   <link rel="stylesheet" href="/application.css" />
   <link rel="stylesheet" href="/public-service.css" />
+  <link rel="stylesheet" href="/citizen.css" />
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
-  <header class="topbar shell">
-    <a class="brand" href="#top"><span class="brand-mark">B</span><span>Benefit Bridge</span><span class="brand-parent">Public Service Passport</span><span class="version-chip">v0.4</span></a>
-    <div class="top-actions">
-      <span id="saved-status" class="saved-status">No saved passport</span>
-      <span id="webmcp-status" class="status-pill"><span class="status-dot"></span>Checking WebMCP…</span>
-      <a class="ghost-link" href="https://github.com/mikelninh/care-abundance-mission-d69f0" target="_blank" rel="noreferrer">GitHub ↗</a>
-    </div>
+
+  <header class="topbar shell citizen-topbar">
+    <a class="brand citizen-brand" href="#top" aria-label="Public Service Passport Startseite">
+      <span class="brand-mark">P</span>
+      <span>Public Service Passport</span>
+      <span class="version-chip">Berlin Pilot</span>
+    </a>
+    <span id="saved-status" class="saved-status">Nicht gespeichert</span>
   </header>
 
-  <main id="top" class="shell">
-    <section class="hero">
-      <div class="hero-copy">
-        <div class="eyebrow">WEBMCP CHALLENGE · PUBLIC SERVICE PASSPORT · BENEFITS MODULE</div>
-        <h1>Tell public services once. <span>Reuse it safely.</span></h1>
-        <p class="hero-lede">Benefit Bridge is the first working module of a Public Service Passport: turn household claims into benefit orientation, reusable evidence and reviewable application packets — while preserving provenance and human authority.</p>
-        <div class="hero-badges"><span>Once-only data</span><span>Evidence provenance</span><span>Rights graph</span><span>Human approval</span><span>Replayable</span></div>
+  <main id="top" class="shell citizen-main">
+    <section class="citizen-hero">
+      <div class="hero-copy citizen-hero-copy">
+        <div class="eyebrow">FAMILIENLEISTUNGEN · BERLIN</div>
+        <h1>Welche Unterstützung könnte Ihrer Familie zustehen?</h1>
+        <p class="hero-lede">Einmal Angaben machen. Wir zeigen, was sicher bekannt ist, was Sie prüfen sollten und welche Unterlagen Sie dafür brauchen.</p>
+        <div class="citizen-trustline">
+          <span>✓ Keine automatische Antragstellung</span>
+          <span>✓ Quellen sichtbar</span>
+          <span>✓ Sie entscheiden</span>
+        </div>
+        <a class="primary-button citizen-cta" href="#check"><span>Jetzt prüfen</span><span>↓</span></a>
       </div>
-      <aside class="agent-card">
-        <div class="agent-head"><span class="pulse"></span><span>Agent surface</span><strong>11 TOOLS · 0 SUBMIT</strong></div>
-        <div class="tool-mini"><code>check_eligibility</code><span>read</span></div>
-        <div class="tool-mini"><code>calculate_support</code><span>read</span></div>
-        <div class="tool-mini"><code>list_missing_evidence</code><span>read</span></div>
-        <div class="tool-mini"><code>explain_result</code><span>read</span></div>
-        <div class="tool-mini"><code>prepare_next_steps</code><span>read</span></div>
-        <div class="tool-mini"><code>replay_case</code><span>read</span></div>
-        <div class="tool-mini tool-new"><code>derive_benefit_passport</code><span>new</span></div>
-        <div class="tool-mini tool-new"><code>get_passport_status</code><span>new</span></div>
-        <div class="tool-mini tool-new"><code>plan_application</code><span>new</span></div>
-        <div class="tool-mini tool-new"><code>prepare_application_packet</code><span>new</span></div>
-        <div class="tool-mini tool-new"><code>validate_application_packet</code><span>new</span></div>
+      <aside class="citizen-explain" aria-label="So funktioniert es">
+        <strong>So funktioniert es</strong>
+        <ol>
+          <li><span>1</span><div><b>Situation angeben</b><small>Familie, Einkommen, Miete.</small></div></li>
+          <li><span>2</span><div><b>Möglichkeiten sehen</b><small>Sichere Beträge, Prüfhinweise und offizielle Quellen.</small></div></li>
+          <li><span>3</span><div><b>Unterlagen vorbereiten</b><small>Sie sehen genau, was noch fehlt.</small></div></li>
+          <li><span>4</span><div><b>Entwurf prüfen</b><small>Nichts wird ohne Ihre Entscheidung versendet.</small></div></li>
+        </ol>
       </aside>
     </section>
 
-    <section class="platform-vision panel" aria-labelledby="public-service-title">
-      <div class="platform-head">
-        <div>
-          <span class="platform-kicker">PUBLIC SERVICE PASSPORT</span>
-          <h2 id="public-service-title">One trusted profile. Many public services.</h2>
-          <p>Benefits are the first working module. The larger contract is simple: collect facts and evidence once, preserve where they came from, reuse only with permission, and keep every real authority decision outside the agent.</p>
-        </div>
-        <div class="platform-promise"><strong>Today’s proof</strong>Benefits work end-to-end from household orientation to a human-reviewed application packet.</div>
+    <section class="problem-strip" aria-labelledby="problem-title">
+      <div class="problem-intro"><span class="eyebrow-small">DAS PROBLEM</span><h2 id="problem-title">Heute erzählen Menschen dem Staat dieselben Dinge immer wieder.</h2></div>
+      <div class="problem-grid">
+        <article><strong>Immer wieder dieselben Angaben</strong><p>Einkommen, Kinder und Miete werden für verschiedene Leistungen erneut abgefragt.</p></article>
+        <article><strong>Unklar, was wirklich gilt</strong><p>Zwischen möglichen Ansprüchen, Höchstbeträgen und echten Bescheiden wird schnell etwas verwechselt.</p></article>
+        <article><strong>Unterlagen sind verstreut</strong><p>Menschen müssen selbst herausfinden, welches Dokument für welchen Antrag gebraucht wird.</p></article>
       </div>
-      <div class="service-map">
-        <article class="service-card live"><small>LIVE NOW</small><div><strong>Benefits</strong><p>Kindergeld, KiZ, Wohngeld signals, evidence reuse and application preparation.</p></div></article>
-        <article class="service-card next"><small>NEXT</small><div><strong>Housing</strong><p>Reuse household, rent and identity evidence for housing-related public services.</p></div></article>
-        <article class="service-card next"><small>NEXT</small><div><strong>Family & childcare</strong><p>Reuse child and household facts instead of entering them again.</p></div></article>
-        <article class="service-card"><small>FUTURE</small><div><strong>Health & care</strong><p>Consent-aware administrative evidence, never a replacement for medical records or decisions.</p></div></article>
-        <article class="service-card"><small>FOUNDATION</small><div><strong>Identity & documents</strong><p>Selective disclosure, provenance and explicit permissions across services.</p></div></article>
-      </div>
-      <div class="platform-flow"><span>claim</span><b>→</b><span>evidence</span><b>→</b><span>consent</span><b>→</b><span>service preparation</span><b>→</b><span>human approval</span><b>→</b><span>authority decision</span></div>
+      <div class="solution-line"><b>Die Idee:</b> Angaben einmal erfassen, ihre Herkunft sichtbar halten und nur mit Ihrer Erlaubnis wiederverwenden.</div>
     </section>
 
-    <section class="workspace">
-      <div class="panel input-panel">
-        <div class="panel-heading"><div><span class="section-index">01</span><h2>Household snapshot</h2></div><button id="load-demo" class="text-button" type="button">Load Berlin demo</button></div>
-        <p class="muted">Claims are self-attested. Benefit Bridge never labels typed values as verified evidence.</p>
+    <section id="check" class="workspace citizen-workspace">
+      <div class="panel input-panel citizen-panel">
+        <div class="panel-heading"><div><span class="section-index">01</span><h2>Ihre Situation</h2></div><button id="load-demo" class="text-button" type="button">Beispiel laden</button></div>
+        <p class="muted">Diese Angaben stammen von Ihnen. Sie gelten nicht automatisch als geprüft.</p>
         <form id="household-form">
-          <div class="segmented" aria-label="Household type">
-            <label><input type="radio" name="householdType" value="single" checked><span>Single parent</span></label>
-            <label><input type="radio" name="householdType" value="couple"><span>Couple</span></label>
-          </div>
+          <fieldset class="plain-fieldset">
+            <legend>Haushalt</legend>
+            <div class="segmented" aria-label="Haushaltstyp">
+              <label><input type="radio" name="householdType" value="single" checked><span>Alleinerziehend</span></label>
+              <label><input type="radio" name="householdType" value="couple"><span>Zwei Erwachsene</span></label>
+            </div>
+          </fieldset>
           <div class="field-grid">
-            <label class="field"><span>Gross household income</span><div class="money-input"><span>€</span><input id="income" type="number" min="0" step="50" value="2000" required></div><small>self-attested · per month</small></label>
-            <label class="field"><span>Warm rent</span><div class="money-input"><span>€</span><input id="rent" type="number" min="0" step="50" value="1100" required></div><small>self-attested · per month</small></label>
+            <label class="field"><span>Bruttoeinkommen pro Monat</span><div class="money-input"><span>€</span><input id="income" type="number" min="0" max="100000" step="50" value="2000" required></div></label>
+            <label class="field"><span>Warmmiete pro Monat</span><div class="money-input"><span>€</span><input id="rent" type="number" min="0" max="20000" step="50" value="1100" required></div></label>
           </div>
           <div class="children-block">
-            <div class="field-title"><span>Children</span><button id="add-child" class="text-button" type="button">+ Add child</button></div>
+            <div class="field-title"><span>Kinder und Alter</span><button id="add-child" class="text-button" type="button">+ Kind hinzufügen</button></div>
             <div id="children-list" class="children-list"></div>
           </div>
-          <label class="check-row"><input id="kindergeld" type="checkbox" checked><span><strong>Currently receives Kindergeld</strong><small>Input signal only; not inferred or independently verified.</small></span></label>
-          <button id="evaluate-button" class="primary-button" type="submit"><span>Build my bridge</span><span>→</span></button>
+          <label class="check-row"><input id="kindergeld" type="checkbox" checked><span><strong>Ich bekomme aktuell Kindergeld</strong><small>Wenn Sie unsicher sind, lassen Sie das Feld frei.</small></span></label>
+          <p id="form-error" class="form-error hidden" role="alert"></p>
+          <button id="evaluate-button" class="primary-button" type="submit"><span>Unterstützung prüfen</span><span>→</span></button>
         </form>
-        <p class="fineprint">Prototype orientation only. No application is submitted and no legal entitlement is asserted.</p>
+        <p class="fineprint">Aktuell: Berliner Familienleistungen. Orientierung, keine Behördenentscheidung und keine Rechtsberatung.</p>
       </div>
 
-      <div class="panel results-panel" id="results-panel" aria-live="polite">
-        <div class="panel-heading"><div><span class="section-index">02</span><h2>Your support map</h2></div><span id="trace-badge" class="trace-badge">No trace yet</span></div>
-        <div id="empty-state" class="empty-state">
-          <div class="empty-orbit"><span>↗</span></div>
-          <h3>Turn uncertainty into next steps.</h3>
-          <p>Run the household check. The same backend powers this interface and every WebMCP tool.</p>
+      <div class="panel results-panel citizen-panel" id="results-panel" aria-live="polite">
+        <div class="panel-heading"><div><span class="section-index">02</span><h2>Was für Sie relevant sein könnte</h2></div><span id="trace-badge" class="trace-badge">Noch kein Ergebnis</span></div>
+        <div id="empty-state" class="empty-state citizen-empty">
+          <div class="empty-orbit"><span>€</span></div>
+          <h3>Hier erscheint Ihr Ergebnis.</h3>
+          <p>Wir unterscheiden klar zwischen bekannten Beträgen, möglichen Leistungen und Dingen, die nur eine Behörde verbindlich prüfen kann.</p>
         </div>
         <div id="result-content" class="result-content hidden">
-          <div class="summary-card">
-            <span class="summary-label">CURRENT ORIENTATION</span>
+          <div class="summary-card citizen-summary">
+            <span class="summary-label">KURZÜBERBLICK</span>
             <strong id="summary-headline">—</strong>
             <p id="summary-boundary"></p>
           </div>
           <div id="benefit-cards" class="benefit-cards"></div>
-          <div class="split-section">
-            <div><h3>Evidence to prepare</h3><div id="evidence-list" class="stack-list"></div></div>
-            <div><h3>Next best actions</h3><div id="next-steps" class="stack-list"></div></div>
+          <div class="split-section citizen-next-grid">
+            <div><h3>Diese Unterlagen brauchen Sie wahrscheinlich</h3><div id="evidence-list" class="stack-list"></div></div>
+            <div><h3>Ihre nächsten Schritte</h3><div id="next-steps" class="stack-list"></div></div>
           </div>
-          <details class="trace-details"><summary><span>Inspect decision trace</span><span>Show logic ↓</span></summary><div id="trace-list" class="trace-list"></div></details>
+          <details class="trace-details"><summary><span>Wie kam dieses Ergebnis zustande?</span><span>Details ↓</span></summary><div id="trace-list" class="trace-list"></div></details>
         </div>
       </div>
     </section>
 
-    <section id="passport-panel" class="passport panel hidden">
+    <section id="passport-panel" class="passport panel citizen-passport hidden">
       <div class="passport-header">
         <div>
           <span class="section-index">03</span>
-          <div class="passport-title"><span class="passport-icon">◈</span><div><p class="eyebrow-small">BENEFIT PASSPORT · FIRST PUBLIC SERVICE PASSPORT MODULE</p><h2>Collect once. Reuse safely.</h2></div></div>
+          <div class="passport-title"><span class="passport-icon">◈</span><div><p class="eyebrow-small">IHRE ANGABEN & UNTERLAGEN</p><h2>Einmal erfassen. Sicher wiederverwenden.</h2></div></div>
         </div>
         <div class="passport-actions">
-          <button id="forget-passport" type="button" class="secondary-button hidden">Forget local copy</button>
-          <button id="save-passport" type="button" class="passport-button">Save to this browser</button>
+          <button id="forget-passport" type="button" class="secondary-button hidden">Lokale Kopie löschen</button>
+          <button id="save-passport" type="button" class="passport-button">Nur in diesem Browser speichern</button>
         </div>
       </div>
-      <p class="passport-intro">The passport keeps <strong>claims</strong>, <strong>documentary evidence</strong>, and <strong>derived benefit signals</strong> separate. Saving is an explicit human action and stays local in V0.4.</p>
-      <div class="passport-metrics">
-        <div><span>Passport</span><strong id="passport-id">—</strong></div>
-        <div><span>Reusable claims</span><strong id="claim-count">—</strong></div>
-        <div><span>Evidence categories</span><strong id="evidence-count">—</strong></div>
-        <div><span>Cross-service reuse</span><strong id="reuse-count">—</strong></div>
+      <p class="passport-intro">Ihre eigenen Angaben und echte Dokumente bleiben getrennt. Ein Häkchen bedeutet nur „von mir vorbereitet“ — niemals „von einer Behörde geprüft“.</p>
+      <div class="passport-metrics citizen-metrics">
+        <div><span>Fall-ID</span><strong id="passport-id">—</strong></div>
+        <div><span>Angaben</span><strong id="claim-count">—</strong></div>
+        <div><span>Unterlagen-Arten</span><strong id="evidence-count">—</strong></div>
+        <div><span>Mehrfach nutzbar</span><strong id="reuse-count">—</strong></div>
       </div>
 
       <div class="passport-grid">
-        <div class="passport-column">
-          <div class="subhead"><h3>Claims</h3><span>self-attested ≠ verified</span></div>
-          <div id="passport-claims" class="claim-list"></div>
-        </div>
-        <div class="passport-column">
-          <div class="subhead"><h3>Evidence locker</h3><span>human-controlled readiness</span></div>
-          <div id="passport-evidence" class="evidence-locker"></div>
-        </div>
+        <div class="passport-column"><div class="subhead"><h3>Ihre Angaben</h3><span>selbst angegeben</span></div><div id="passport-claims" class="claim-list"></div></div>
+        <div class="passport-column"><div class="subhead"><h3>Ihre Unterlagen</h3><span>Sie markieren nur, was Sie vorbereitet haben</span></div><div id="passport-evidence" class="evidence-locker"></div></div>
       </div>
+      <div class="readiness-block"><div class="subhead"><h3>Welche Unterlagen können mehrfach helfen?</h3><span>für mehrere Leistungen wiederverwendbar</span></div><div id="service-readiness" class="service-readiness"></div></div>
+    </section>
 
-      <div class="readiness-block">
-        <div class="subhead"><h3>Reuse across services</h3><span>one category can satisfy multiple preparation paths</span></div>
-        <div id="service-readiness" class="service-readiness"></div>
-      </div>
-
-      <div class="rights-graph">
-        <div class="subhead"><h3>Rights graph</h3><span>signals are not awards</span></div>
-        <div class="graph-flow">
-          <div class="graph-node known"><small>known anchor</small><strong>Kindergeld</strong><span>€259 / child</span></div>
-          <div class="graph-arrow">→</div>
-          <div class="graph-node potential"><small>pre-check</small><strong>KiZ</strong><span>up to €297 / child</span></div>
-          <div class="graph-arrow split-arrow">↘</div>
-          <div class="graph-node official"><small>official check</small><strong>Wohngeld</strong><span>no guessed amount</span></div>
-          <div class="graph-arrow">→</div>
-          <div class="graph-node downstream"><small>if awarded</small><strong>Bildung & Teilhabe</strong><span>€195 school supplies / year + more</span></div>
-        </div>
+    <section class="citizen-safety panel" aria-labelledby="safety-title">
+      <div><span class="eyebrow-small">WICHTIG</span><h2 id="safety-title">Sie behalten die Kontrolle.</h2></div>
+      <div class="safety-grid">
+        <article><strong>Wir entscheiden nicht über Ihren Anspruch.</strong><p>Verbindliche Entscheidungen trifft weiterhin die zuständige Behörde.</p></article>
+        <article><strong>Wir senden nichts automatisch ab.</strong><p>Das System kann vorbereiten und prüfen. Die letzte Entscheidung bleibt bei Ihnen.</p></article>
+        <article><strong>„Vorbereitet“ heißt nicht „geprüft“.</strong><p>Eigene Angaben, Dokumente und abgeleitete Hinweise bleiben sichtbar getrennt.</p></article>
       </div>
     </section>
 
-    <section class="proof-grid">
-      <article><span class="section-index">05</span><h3>Once-only without magical trust.</h3><p>Benefit Passport reuses structured facts, but never upgrades typed claims into verified evidence. Provenance travels with the data.</p></article>
-      <article><span class="section-index">06</span><h3>Benefits form a graph.</h3><p>KiZ or Wohngeld can unlock Bildung & Teilhabe. The system shows downstream rights while keeping “possible” and “actually awarded” rigorously separate.</p></article>
-      <article><span class="section-index">07</span><h3>Agents prepare. Humans authorise.</h3><p>An agent can check, explain, replay and build a preparation plan. Saving the passport or acting on an application remains an explicit human choice.</p></article>
-    </section>
-
-    <section class="simulator panel">
-      <div class="panel-heading"><div><span class="section-index">08</span><h2>Agent simulator</h2></div><span class="lab-pill">WEBMCP CONTRACT HARNESS</span></div>
-      <p class="muted">No WebMCP-enabled browser? This invokes the exact same registered handlers so reviewers can inspect the tool contract and returned evidence.</p>
-      <div class="simulator-grid"><div id="tool-buttons" class="tool-buttons"></div><pre id="tool-output">Select a tool after building a household bridge.</pre></div>
-    </section>
+    <details class="technical-proof panel">
+      <summary><span>Technische Details & WebMCP-Nachweis</span><small>für Entwickler:innen und Challenge-Jury</small></summary>
+      <div class="technical-inner">
+        <div class="technical-head">
+          <div><span id="webmcp-status" class="status-pill"><span class="status-dot"></span>WebMCP wird geprüft…</span><p>11 lesende Tools, 0 Submit-Tools. Agents können vorbereiten, aber nichts bei einer Behörde einreichen.</p></div>
+          <a class="ghost-link" href="https://github.com/mikelninh/public-service-passport" target="_blank" rel="noreferrer">GitHub ↗</a>
+        </div>
+        <div class="simulator-grid"><div id="tool-buttons" class="tool-buttons"></div><pre id="tool-output">Nach dem Leistungs-Check können hier die WebMCP-Tool-Verträge getestet werden.</pre></div>
+      </div>
+    </details>
   </main>
 
-  <footer class="shell footer"><span>Benefit Bridge · Public Service Passport proof · v0.4 · MIT</span><span>Tell us once. Reuse it safely.</span></footer>
+  <footer class="shell footer citizen-footer"><span>Public Service Passport · Berlin Pilot · MIT</span><span>Vorbereiten. Verstehen. Selbst entscheiden.</span></footer>
   <script type="module" src="/app.js"></script>
   <script type="module" src="/v03.js"></script>
   <script type="module" src="/v03-simulator.js"></script>
