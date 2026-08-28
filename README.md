@@ -1,115 +1,139 @@
-# Benefit Bridge 🌉
+# Public Service Passport 🇩🇪
 
-**The first working module of a Public Service Passport: tell public services once, then reuse facts and evidence safely.**
+**Tell public services once. Reuse it safely.**
 
-Benefit Bridge is a WebMCP challenge proof for agent-native public services. The current working module focuses on German public benefits: household orientation, reusable evidence, a Benefit Passport, and a reviewable Application Studio packet with an explicit human approval boundary.
+A working Berlin pilot that helps families understand possible public benefits, see what is known vs. uncertain, prepare the right evidence, and create a reviewable application draft — while keeping the final decision with the person and the authority.
 
-## Public Service Passport
+👉 **Live:** https://public-service-passport.netlify.app/
 
-Benefit Bridge is the **benefits module** of a broader product direction:
+## Why this exists
 
-```text
-Public Service Passport
-├─ Benefits                 ← live working proof
-├─ Housing                  ← next
-├─ Family & childcare       ← next
-├─ Health & care admin      ← future
-└─ Identity & documents     ← trust foundation
-```
+Public services repeatedly ask people for the same facts: household, children, income, rent, evidence. Citizens then have to work out which benefit might apply, which document is needed where, and what is actually certain.
 
-The intended contract is:
+Public Service Passport explores a simpler model:
 
-> **collect once → preserve provenance → reuse with permission → prepare safely → human approval → authority decision**
+> **enter facts once → preserve provenance → reuse with permission → prepare safely → human approval → authority decision**
 
-The roadmap labels are intentionally explicit. Only the benefits path is implemented in this challenge build.
+The first working module is **Benefit Bridge**, focused on family benefits in Berlin.
 
-## V0.4 — From household to reviewable packet
+## What a citizen can do today
 
-```text
-household claims
-      ↓
-deterministic benefit signals
-      ↓
-Benefit Passport
-  ├─ self-attested claims
-  ├─ evidence map
-  ├─ reuse matrix
-  └─ rights graph
-      ↓
-Application Studio (browser-local identity layer)
-  ├─ pre-filled fields + provenance
-  ├─ evidence bindings
-  ├─ unresolved fields / blockers
-  ├─ official-service components
-  └─ human review manifest
-      ↓
-local JSON export
-      ↓
-human opens official service
-```
+1. Enter household, income, rent and children.
+2. See clearly separated results:
+   - known amounts,
+   - benefits worth checking,
+   - questions that only the authority can decide.
+3. See which evidence is likely needed.
+4. Build a reusable local Benefit Passport.
+5. Prepare a reviewable application packet.
+6. Approve a **local export only**.
 
-**There is deliberately no “submitted” state inside Benefit Bridge.**
+Nothing is submitted to an authority.
 
-## Berlin demo
+## Example
 
-Synthetic household: single parent · children 7 + 12 · €2,000 gross/month · €1,100 warm rent.
+Synthetic Berlin household:
+
+- single parent
+- children aged 7 and 12
+- €2,000 gross income / month
+- €1,100 warm rent
+- currently receives Kindergeld
+
+Current result:
 
 - **€518/month known Kindergeld anchor** — 2 × €259
-- **up to €594/month KiZ worth checking** — maximum anchor, not entitlement
-- **Wohngeld → official check** — no guessed statutory amount
-- **Bildung & Teilhabe → conditional downstream right** if KiZ/Wohngeld is actually awarded; 2026 school-supplies anchor: **€195/year**
+- **up to €594/month Kinderzuschlag worth checking** — maximum anchor, not entitlement
+- **Wohngeld → official check** — no invented amount
+- **Bildung & Teilhabe → conditional downstream right** if a qualifying benefit is awarded
 
-The Application Studio uses a clearly synthetic local-only applicant (`Mara Beispiel`) for the challenge flow.
+## WebMCP: a safe interface for AI agents
+
+The website works normally for people. WebMCP adds a structured interface so a compatible AI assistant can understand exactly what the site allows it to do.
+
+A person could simply ask:
+
+> “Check which family benefits might apply to me, tell me which documents are missing, and prepare the next step.”
+
+Instead of guessing which buttons to click, the agent receives explicit tools with typed inputs and outputs.
+
+**Current surface: 11 read-only tools · 0 submission tools.**
+
+Examples:
+
+- `check_eligibility`
+- `calculate_support`
+- `list_missing_evidence`
+- `derive_benefit_passport`
+- `plan_application`
+- `prepare_application_packet`
+- `validate_application_packet`
+
+There is deliberately **no** `submit_application`, signing, authentication-as-user, or upload-to-authority tool.
+
+> **Agents prepare. People authorise. Authorities decide.**
 
 ## Trust model
 
-### 1. Pre-fill without erasing provenance
-A packet field sourced from the Benefit Passport stays labelled `self_attested_claim`. Local applicant identity/contact data is labelled `local_human_input`. A derived benefit signal is labelled `deterministic_policy`.
+Every result follows the same chain:
 
-### 2. Missing information stays missing
-The packet can be `draft_blocked`. It exposes missing evidence and unresolved human fields instead of inferring them.
+**claim → evidence → derived signal → prepared application field → human review → authority decision**
 
-### 3. Evidence readiness is not verification
-A user can mark an evidence category **prepared by human**. Benefit Bridge never upgrades that to “verified by authority”.
+Key rules:
 
-### 4. PII can stay browser-local
-Household benefit evaluation stays server-side and stateless. Applicant name/address/contact details are combined into the packet by `public/packet-core.js` in the browser. They are not required by `/api/evaluate`.
+- self-entered facts stay labelled as self-attested
+- prepared evidence is never called authority-verified
+- missing information stays missing
+- unsupported geography fails closed instead of reusing Berlin rules
+- browser-local applicant identity/contact data does not need to be sent to `/api/evaluate`
+- packet approval never changes `submissionAllowed: false`
+- the server is stateless
 
-### 5. Human approval is a separate state
-Three explicit confirmations are required before local export:
+## Proof, not just claims
 
-- claims/details reviewed
-- evidence statuses reviewed
-- “this is not submission” understood
+The current release has been tested at multiple layers:
 
-Even after approval, `submissionAllowed` remains **false**.
+- **47/47 deterministic, integration and adversarial tests passing**
+- happy-path household → benefits → passport → application packet → human review
+- KiZ, Wohngeld and Bildung & Teilhabe preparation flows
+- malformed JSON and wrong HTTP methods/content types
+- unsupported city rejection
+- contradictory household inputs
+- omitted Kindergeld status fails closed
+- oversized requests and household-size limits
+- XSS/malicious text handling
+- strict CSP, frame protection and `nosniff`
+- zero-submit authority-boundary guard
+- responsive desktop + 390 px mobile browser QA
+- native Chrome WebMCP discovery: **11/11 tools, all read-only**
+- external production browser run against the public Netlify deployment
 
-## WebMCP surface — 11 read-only tools, 0 submission tools
+The production browser test clicked the real **Unterstützung prüfen** CTA and verified the expected Berlin demo result, Passport visibility and Application Studio visibility with zero product runtime errors.
 
-1. `check_eligibility`
-2. `calculate_support`
-3. `list_missing_evidence`
-4. `explain_result`
-5. `prepare_next_steps`
-6. `replay_case`
-7. `derive_benefit_passport`
-8. `get_passport_status`
-9. `plan_application`
-10. `prepare_application_packet`
-11. `validate_application_packet`
+## Scope
 
-The human UI and packet WebMCP tools share the same underlying application logic.
+This is a **working Berlin public-benefits pilot**, not a complete German entitlement engine.
 
-## Official-flow grounding
+Currently implemented:
 
-Current official pages are used only to anchor the preparation model, not to claim that Benefit Bridge reproduces the authority forms exactly.
+```text
+Public Service Passport
+└─ Benefits / Benefit Bridge      ← LIVE · Berlin pilot
+   ├─ Kindergeld orientation
+   ├─ Kinderzuschlag signal
+   ├─ Wohngeld official-check routing
+   ├─ Bildung & Teilhabe downstream signal
+   ├─ reusable evidence passport
+   └─ application preparation
 
-- Bundesagentur für Arbeit: KiZ online/forms page lists a **main application**, a **child annex per child**, and an **applicant/partner annex**.
-- KiZ-Lotse asks about children, basic-security receipt, income and rent, while explicitly not calculating the final KiZ amount.
-- Berlin Wohngeld guidance asks for identity documents, rental documents, recent rent-payment evidence and household income evidence.
-- Berlin's service supports an online application and a generated PDF copy, but Benefit Bridge does not automate that submission step.
+Future directions
+├─ Housing
+├─ Family & childcare
+├─ Health & care administration
+└─ Identity & documents
+```
 
-Source URLs are embedded in the policy/packet schemas.
+Final entitlement and all binding decisions remain with the responsible authority.
 
 ## Run locally
 
@@ -128,18 +152,9 @@ node --check public/v03.js
 node --check netlify/functions/evaluate.mjs
 ```
 
-Current deterministic suite: **17 tests** plus an end-to-end smoke case across household → passport → packet → human review validation.
+## Stack
 
-## Privacy / authority boundary
-
-- server is stateless
-- no identity documents are uploaded
-- no real documents are retained
-- Benefit Passport save requires explicit browser-local action
-- Application Studio identity/contact fields are browser/session-local
-- packet export requires explicit human approval
-- export is JSON only; it is **not** sent to an authority
-- no WebMCP tool signs, authenticates, uploads or submits an application
+Vanilla JavaScript · Netlify Functions · deterministic policy engine · browser-local state · WebMCP · GitHub Actions
 
 ## License
 
@@ -147,4 +162,4 @@ MIT — see [`LICENSE`](./LICENSE).
 
 ---
 
-Built as a public-interest WebMCP proof by Michael Ninh in Berlin.
+Built as a public-interest prototype by **Michael Ninh** in Berlin.
