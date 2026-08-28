@@ -29,12 +29,17 @@ jobs:
           node --check public/v03-simulator.js
           node --check public/v1.js
           node --check public/openproof-verifier.js
+          node --check public/case-handoff.js
+          node --check public/citizen-authority-case.js
+          node --check public/v1-handoff.js
           node --check public/authority-core.js
           node --check public/authority.js
+          node --check public/authority-handoff.js
           node --check public/pilot-core.js
           node --check public/pilot.js
           node --check scripts/run-authority-pilot.mjs
           node --check tests/browser-v1.mjs
+          node --check tests/browser-journey.mjs
           node --check netlify/functions/evaluate.mjs
       - name: Authority-boundary guard
         shell: bash
@@ -50,6 +55,7 @@ jobs:
           grep -q "Ihre aktuellen Werte sind selbst angegeben" public/v1.html
           grep -q "Infrastruktur-Evidence, nicht ein Nachweis über Sie" public/v1.html
           grep -q "Kein Anspruchsbescheid" public/v1.html
+          grep -q "Diesen Testfall aus Behördensicht ansehen" public/v1.html
           grep -q "SYNTHETISCHE SANDBOX" public/authority.html
           grep -q "Kein gemessener Behördenbetrieb" public/pilot.html
           echo "Citizen and authority trust boundaries are visible."
@@ -74,3 +80,4 @@ jobs:
             exit 1
           fi
           npm run test:browser
+          npm run test:journey
