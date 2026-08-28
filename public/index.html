@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="/application.css" />
   <link rel="stylesheet" href="/public-service.css" />
   <link rel="stylesheet" href="/citizen.css" />
+  <link rel="stylesheet" href="/readability.css" />
 </head>
 <body>
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
@@ -133,6 +134,29 @@
       <div class="readiness-block"><div class="subhead"><h3>Welche Unterlagen können mehrfach helfen?</h3><span>für mehrere Leistungen wiederverwendbar</span></div><div id="service-readiness" class="service-readiness"></div></div>
     </section>
 
+    <section class="agent-explainer panel" aria-labelledby="agent-title">
+      <div class="agent-explainer-head">
+        <span class="eyebrow-small">KI-ASSISTENTEN & WEBMCP</span>
+        <h2 id="agent-title">Die Seite funktioniert für Sie — und kann auch von Ihrem KI-Assistenten benutzt werden.</h2>
+        <p>Sie müssen WebMCP nicht kennen. Es ist nur die sichere Schnittstelle, über die ein kompatibler KI-Assistent versteht, <strong>was diese Website für Sie tun darf</strong>.</p>
+      </div>
+      <div class="agent-example">
+        <span class="agent-you">Sie</span>
+        <blockquote>„Prüf bitte, welche Familienleistungen für mich infrage kommen, welche Unterlagen fehlen und bereite den nächsten Schritt vor.“</blockquote>
+      </div>
+      <div class="agent-flow" aria-label="So arbeitet ein KI-Assistent mit dieser Website">
+        <article><span class="agent-step">1</span><div><strong>Sie stellen eine normale Frage.</strong><p>Keine Tool-Namen, keine Technik. Einfach sagen, was Sie brauchen.</p></div></article>
+        <article><span class="agent-step">2</span><div><strong>Ihr KI-Assistent fragt die Website.</strong><p>Wenn der Assistent WebMCP unterstützt, bekommt er eine klare Liste erlaubter Funktionen statt auf Buttons zu raten.</p></div></article>
+        <article><span class="agent-step">3</span><div><strong>Die Website gibt nur erlaubte Werkzeuge frei.</strong><p>Zum Beispiel Leistungen prüfen, Beträge berechnen, fehlende Unterlagen nennen oder einen Entwurf vorbereiten.</p></div></article>
+        <article><span class="agent-step">4</span><div><strong>Sie behalten die Entscheidung.</strong><p>Der Assistent kann vorbereiten. Er kann hier keinen Antrag bei einer Behörde abschicken.</p></div></article>
+      </div>
+      <div class="agent-when">
+        <div><strong>Wann ist das nützlich?</strong><p>Wenn Sie nicht selbst durch Formulare, Regeln und verschiedene Seiten klicken möchten — etwa beim Prüfen von Leistungen, Sammeln von Unterlagen oder Vorbereiten eines Antrags.</p></div>
+        <div class="agent-boundary"><span>11 erlaubte Werkzeuge</span><span>0 Werkzeuge zum Absenden</span></div>
+      </div>
+      <p class="agent-no-requirement"><strong>Wichtig:</strong> Die Website funktioniert auch ganz normal ohne KI-Assistenten. WebMCP ist eine zusätzliche, sichere Bedienmöglichkeit für kompatible Agenten.</p>
+    </section>
+
     <section class="citizen-safety panel" aria-labelledby="safety-title">
       <div><span class="eyebrow-small">WICHTIG</span><h2 id="safety-title">Sie behalten die Kontrolle.</h2></div>
       <div class="safety-grid">
@@ -143,10 +167,10 @@
     </section>
 
     <details class="technical-proof panel">
-      <summary><span>Technische Details & WebMCP-Nachweis</span><small>für Entwickler:innen und Challenge-Jury</small></summary>
+      <summary><span>Technische Details: WebMCP & die 11 Werkzeuge</span><small>optional · für Interessierte und Entwickler:innen</small></summary>
       <div class="technical-inner">
         <div class="technical-head">
-          <div><span id="webmcp-status" class="status-pill"><span class="status-dot"></span>WebMCP wird geprüft…</span><p>11 lesende Tools, 0 Submit-Tools. Agents können vorbereiten, aber nichts bei einer Behörde einreichen.</p></div>
+          <div><span id="webmcp-status" class="status-pill"><span class="status-dot"></span>WebMCP wird geprüft…</span><p>11 lesende Tools, 0 Submit-Tools. Ein kompatibler Agent kann prüfen und vorbereiten, aber nichts bei einer Behörde einreichen.</p></div>
           <a class="ghost-link" href="https://github.com/mikelninh/public-service-passport" target="_blank" rel="noreferrer">GitHub ↗</a>
         </div>
         <div class="simulator-grid"><div id="tool-buttons" class="tool-buttons"></div><pre id="tool-output">Nach dem Leistungs-Check können hier die WebMCP-Tool-Verträge getestet werden.</pre></div>
