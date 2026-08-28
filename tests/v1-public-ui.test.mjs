@@ -27,6 +27,11 @@ test('v1 exposes the proof privacy distinction without claiming current visitor 
   assert.ok(js.includes("state.textContent = 'nachweisbereit · Aussteller fehlt'"));
 });
 
+test('v1 says explicitly that even a verified proof is not an entitlement decision', () => {
+  assert.ok(html.includes('Auch ein später kryptografisch verifizierter Proof'));
+  assert.ok(html.includes('kein Leistungsbescheid'));
+});
+
 test('v1 labels amount semantics instead of forcing citizens to infer them', () => {
   assert.ok(js.includes("deterministic_anchor: 'bekannter Richtwert'"));
   assert.ok(js.includes("maximum_potential_not_entitlement: 'Höchstbetrag · kein Anspruch'"));

@@ -54,6 +54,7 @@ async function runViewport(browser, name, viewport) {
     assert.equal(await text(page, '#v1-headline'), GOLDEN_HEADLINE, `${name}: golden result changed`);
     assert.match(await text(page, '#v1-proof-state'), /nachweisbereit/);
     assert.match(await text(page, '#v1-proof'), /Ihre aktuellen Werte sind selbst angegeben/);
+    assert.match(await text(page, '#v1-proof'), /kein Leistungsbescheid/);
     assert.match(await text(page, '#v1-proof-private'), /exaktes Einkommen/i);
     assert.match(await text(page, '.rail-proof'), /OpenProof run 33167627520/);
     assert.match(await text(page, '.rail-proof'), /Infrastruktur-Evidence, nicht ein Nachweis über Sie/);
