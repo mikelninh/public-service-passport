@@ -1,0 +1,53 @@
+name: Probe live authority pilot
+
+on:
+  pull_request:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for pilot page to deploy
+        shell: bash
+        run: |
+          set -euo pipefail
+          url="https://public-service-passport.netlify.app/pilot.html"
+          for i in $(seq 1 18); do
+            body=$(curl -fsSL "$url" || true)
+            if grep -q "SYNTHETISCHER BEHÖRDENPILOT" <<<"$body"; then
+              echo "Pilot page is live on attempt $i"
+              exit 0
+            fi
+            echo "Waiting for production deploy ($i/18)..."
+            sleep 10
+          done
+          echo "Pilot page did not appear in production in time."
+          exit 1
+
+      - name: Check production pilot assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL https://public-service-passport.netlify.app/pilot.js | grep -q "runSyntheticAuthorityPilot"
+          curl -fsSL https://public-service-passport.netlify.app/pilot-core.js | grep -q "runSyntheticAuthorityPilot"
+          curl -fsSL https://public-service-passport.netlify.app/pilot.css | grep -q "metric-grid"
+          echo "Pilot assets are live."
+
+      - name: Render production dashboard in Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          chrome=$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)
+          "$chrome" --headless=new --no-sandbox --disable-gpu --virtual-time-budget=4000 \
+            --dump-dom https://public-service-passport.netlify.app/pilot.html > /tmp/pilot-dom.html
+          grep -q '>100<' /tmp/pilot-dom.html
+          grep -q '>40<' /tmp/pilot-dom.html
+          grep -q '>60<' /tmp/pilot-dom.html
+          grep -q '>100%<' /tmp/pilot-dom.html
+          grep -q '>87%<' /tmp/pilot-dom.html
+          grep -q '>500<' /tmp/pilot-dom.html
+          grep -q '>160<' /tmp/pilot-dom.html
+          grep -q '>340<' /tmp/pilot-dom.html
+          grep -q '68% weniger im Modell' /tmp/pilot-dom.html
+          grep -q 'ausgezahlt + reconciled' /tmp/pilot-dom.html
+          echo "Production dashboard rendered expected pilot metrics."
