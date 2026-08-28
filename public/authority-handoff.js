@@ -1,17 +1,16 @@
-import { CITIZEN_AUTHORITY_HANDOFF_STORAGE_KEY, parseCitizenAuthorityHandoff } from './case-handoff.js';
-import { createAuthorityCaseFromCitizenHandoff } from './citizen-authority-case.js';
+import { CITIZEN_CASE_HANDOFF_STORAGE_KEY, toAuthorityPreviewCase } from './citizen-case-handoff.js';
 import { runAuthorityPreflight, citizenTimeline, sourceVerifiedRatio } from './authority-core.js';
 
 const params = new URLSearchParams(window.location.search);
 if (params.get('source') === 'citizen') bootstrapCitizenPreview();
 
 function bootstrapCitizenPreview() {
-  const raw = localStorage.getItem(CITIZEN_AUTHORITY_HANDOFF_STORAGE_KEY);
-  localStorage.removeItem(CITIZEN_AUTHORITY_HANDOFF_STORAGE_KEY);
+  const raw = localStorage.getItem(CITIZEN_CASE_HANDOFF_STORAGE_KEY);
+  localStorage.removeItem(CITIZEN_CASE_HANDOFF_STORAGE_KEY);
 
-  let handoff;
+  let caseFile;
   try {
-    handoff = parseCitizenAuthorityHandoff(raw, { now: Date.now() });
+    caseFile = toAuthorityPreviewCase(raw, { now: Date.now() });
   } catch (error) {
     showBoundaryBanner(`Der lokale Bürger-Handoff fehlt oder ist abgelaufen (${error.message}).`, true);
     document.querySelector('.scenario-panel')?.setAttribute('hidden', '');
@@ -19,7 +18,6 @@ function bootstrapCitizenPreview() {
     return;
   }
 
-  let caseFile = createAuthorityCaseFromCitizenHandoff(handoff, { now: Date.now() });
   document.querySelector('.scenario-panel')?.setAttribute('hidden', '');
   showBoundaryBanner('Lokaler Bürger-Testfall geladen. Die Daten wurden nicht an eine Behörde gesendet. Selbstangaben bleiben Selbstangaben.');
 
