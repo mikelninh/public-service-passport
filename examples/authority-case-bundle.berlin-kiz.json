@@ -1,0 +1,131 @@
+{
+  "version": "psp-authority-bundle/0.1",
+  "caseId": "bb_3b2f260396",
+  "correlationId": "psp-demo-berlin-kiz-001",
+  "service": {
+    "id": "kiz",
+    "label": "Kinderzuschlag",
+    "jurisdiction": "DE-BE",
+    "destinationId": null,
+    "schemaRef": null
+  },
+  "applicant": {
+    "identityRef": "synthetic:mara-beispiel",
+    "authenticationLevel": "none",
+    "identityProvider": null
+  },
+  "claims": [
+    {
+      "id": "household_type",
+      "value": "single_parent",
+      "verificationTier": "self_attested",
+      "proofRef": null,
+      "scope": "kiz-orientation",
+      "validUntil": null
+    },
+    {
+      "id": "children",
+      "value": [{"age": 7}, {"age": 12}],
+      "verificationTier": "self_attested",
+      "proofRef": null,
+      "scope": "kiz-orientation",
+      "validUntil": null
+    },
+    {
+      "id": "income",
+      "value": 2000,
+      "verificationTier": "document_backed",
+      "proofRef": "ev_income_demo",
+      "scope": "kiz-application",
+      "validUntil": null
+    },
+    {
+      "id": "rent",
+      "value": 1100,
+      "verificationTier": "document_backed",
+      "proofRef": "ev_rent_demo",
+      "scope": "kiz-application",
+      "validUntil": null
+    },
+    {
+      "id": "kindergeld_status",
+      "value": true,
+      "verificationTier": "self_attested",
+      "proofRef": null,
+      "scope": "kiz-orientation",
+      "validUntil": null
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev_income_demo",
+      "kind": "document",
+      "source": "synthetic payslip category",
+      "status": "supplied",
+      "issuer": null,
+      "evidenceRef": null,
+      "sha256": null,
+      "signatureRef": null,
+      "observedAt": null,
+      "validUntil": null,
+      "sensitivity": "personal"
+    },
+    {
+      "id": "ev_rent_demo",
+      "kind": "document",
+      "source": "synthetic rental evidence category",
+      "status": "supplied",
+      "issuer": null,
+      "evidenceRef": null,
+      "sha256": null,
+      "signatureRef": null,
+      "observedAt": null,
+      "validUntil": null,
+      "sensitivity": "personal"
+    }
+  ],
+  "derivedSignals": [
+    {
+      "id": "kiz_orientation",
+      "policyVersion": "benefit-bridge-v0.4",
+      "result": {"worthChecking": true, "maximumMonthly": 594},
+      "boundary": "Orientation only. This is not an authority award or final KiZ calculation."
+    }
+  ],
+  "consent": {
+    "purpose": "Prepare a synthetic Kinderzuschlag authority handoff",
+    "status": "not_requested",
+    "grantedAt": null,
+    "receiptRef": null
+  },
+  "preflight": {
+    "schemaValid": true,
+    "complete": false,
+    "contradictions": [],
+    "exceptions": ["identity_not_authenticated", "claims_not_source_verified"],
+    "sourceVerifiedRatio": 0
+  },
+  "submission": {
+    "status": "draft",
+    "route": "none",
+    "submittedAt": null,
+    "receivedAt": null,
+    "transportReceiptRef": null
+  },
+  "decision": {
+    "status": "not_started",
+    "authority": "Familienkasse (synthetic target only)",
+    "decidedAt": null,
+    "approvalReceiptRef": null,
+    "conditions": []
+  },
+  "payment": {
+    "status": "not_started",
+    "amount": null,
+    "currency": "EUR",
+    "period": null,
+    "instructionAt": null,
+    "settledAt": null,
+    "paymentReceiptRef": null
+  }
+}

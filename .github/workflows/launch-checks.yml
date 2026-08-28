@@ -19,6 +19,8 @@ jobs:
         run: npm install --ignore-scripts
       - name: Deterministic, golden and adversarial tests
         run: npm run check
+      - name: Run 100-case authority pilot
+        run: npm run pilot
       - name: Syntax checks
         run: |
           node --check public/app.js
@@ -27,6 +29,11 @@ jobs:
           node --check public/v03-simulator.js
           node --check public/v1.js
           node --check public/openproof-verifier.js
+          node --check public/authority-core.js
+          node --check public/authority.js
+          node --check public/pilot-core.js
+          node --check public/pilot.js
+          node --check scripts/run-authority-pilot.mjs
           node --check tests/browser-v1.mjs
           node --check netlify/functions/evaluate.mjs
       - name: Authority-boundary guard
@@ -43,7 +50,9 @@ jobs:
           grep -q "Ihre aktuellen Werte sind selbst angegeben" public/v1.html
           grep -q "Infrastruktur-Evidence, nicht ein Nachweis über Sie" public/v1.html
           grep -q "Kein Anspruchsbescheid" public/v1.html
-          echo "Citizen trust boundaries are visible."
+          grep -q "SYNTHETISCHE SANDBOX" public/authority.html
+          grep -q "Kein gemessener Behördenbetrieb" public/pilot.html
+          echo "Citizen and authority trust boundaries are visible."
       - name: Install Chromium for release browser QA
         run: npx playwright install --with-deps chromium
       - name: Desktop + 390px mobile release browser QA
