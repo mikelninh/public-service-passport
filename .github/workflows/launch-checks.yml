@@ -16,12 +16,19 @@ jobs:
           node-version: 20
       - name: Deterministic tests and smoke
         run: npm run check
+      - name: Run 100-case authority pilot
+        run: npm run pilot
       - name: Syntax checks
         run: |
           node --check public/app.js
           node --check public/packet-core.js
           node --check public/v03.js
           node --check public/v03-simulator.js
+          node --check public/authority-core.js
+          node --check public/authority.js
+          node --check public/pilot-core.js
+          node --check public/pilot.js
+          node --check scripts/run-authority-pilot.mjs
           node --check netlify/functions/evaluate.mjs
       - name: Authority-boundary guard
         shell: bash
