@@ -1,10 +1,11 @@
-name: Benefit Bridge launch checks
+name: Public Service Passport launch checks
 
 on:
   pull_request:
   push:
     branches:
       - feat/benefit-bridge-webmcp
+      - feat/v1-openproof-citizen
 
 jobs:
   verify:
@@ -13,8 +14,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
-      - name: Deterministic tests and smoke
+          node-version: 22
+      - name: Deterministic, golden and adversarial tests
         run: npm run check
       - name: Syntax checks
         run: |
@@ -22,6 +23,8 @@ jobs:
           node --check public/packet-core.js
           node --check public/v03.js
           node --check public/v03-simulator.js
+          node --check public/v1.js
+          node --check public/openproof-verifier.js
           node --check netlify/functions/evaluate.mjs
       - name: Authority-boundary guard
         shell: bash
@@ -31,3 +34,10 @@ jobs:
             exit 1
           fi
           echo "No submit/sign/authenticate/upload-to-authority tool identifiers detected."
+      - name: Public trust-language guard
+        shell: bash
+        run: |
+          grep -q "Ihre aktuellen Werte sind selbst angegeben" public/v1.html
+          grep -q "Infrastruktur-Evidence, nicht ein Nachweis über Sie" public/v1.html
+          grep -q "Kein Anspruchsbescheid" public/v1.html
+          echo "Citizen trust boundaries are visible."

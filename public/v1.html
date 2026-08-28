@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Public Service Passport v1.0 hilft Berliner Familien, mögliche Leistungen zu verstehen, Unterlagen zu planen und zu sehen, was sich künftig privat beweisen lässt." />
+  <title>Public Service Passport v1.0 — Familienleistungen Berlin</title>
+  <link rel="stylesheet" href="/v1.css" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Public Service Passport Startseite">
+      <span class="brand-mark" aria-hidden="true">P</span>
+      <span>Public Service Passport</span>
+    </a>
+    <div class="topbar-meta"><span class="version">v1.0 · Public Pilot</span><span>Berlin</span></div>
+  </header>
+
+  <main id="top">
+    <section class="hero shell">
+      <div class="hero-copy">
+        <p class="eyebrow">FAMILIENLEISTUNGEN · BERLIN · 2026</p>
+        <h1>Was ist für Ihre Familie jetzt der sinnvollste nächste Schritt?</h1>
+        <p class="lede">Sie geben Ihre Situation einmal an. Wir trennen klar zwischen bekannten Beträgen, möglichen Leistungen und Dingen, die nur eine Behörde verbindlich entscheiden kann.</p>
+        <div class="trustline" aria-label="Sicherheitsgrenzen">
+          <span>Keine Anmeldung</span>
+          <span>Nichts wird automatisch versendet</span>
+          <span>Offizielle Quellen sichtbar</span>
+        </div>
+        <a class="button primary" href="#check">Jetzt prüfen <span aria-hidden="true">↓</span></a>
+      </div>
+      <aside class="hero-card">
+        <p class="mini-label">Drei Fragen, die v1.0 beantworten soll</p>
+        <ol>
+          <li><span>1</span><div><strong>Was sollte ich prüfen?</strong><small>Priorisiert statt Link-Sammlung.</small></div></li>
+          <li><span>2</span><div><strong>Was brauche ich dafür?</strong><small>Unterlagen einmal vorbereiten.</small></div></li>
+          <li><span>3</span><div><strong>Was könnte ich privat beweisen?</strong><small>Nur die nötige Tatsache statt des ganzen Dokuments.</small></div></li>
+        </ol>
+      </aside>
+    </section>
+
+    <section class="shell examples" aria-labelledby="examples-title">
+      <div class="section-head compact-head"><div><p class="eyebrow">GOLDEN CASES</p><h2 id="examples-title">Mit einem Beispiel ausprobieren</h2></div><p>Alle Beispiele sind synthetisch.</p></div>
+      <div class="case-grid">
+        <button type="button" class="case-card" data-case="single-parent-main"><strong>Alleinerziehend · 2 Kinder</strong><span>€2.000 brutto · €1.100 Warmmiete</span></button>
+        <button type="button" class="case-card" data-case="single-parent-floor"><strong>Genau an der KiZ-Schwelle</strong><span>1 Kind · €600 brutto</span></button>
+        <button type="button" class="case-card" data-case="couple-below"><strong>Knapp unter der Paar-Schwelle</strong><span>1 Kind · €899 brutto</span></button>
+        <button type="button" class="case-card" data-case="kindergeld-unknown"><strong>Kindergeld nicht bestätigt</strong><span>Keine positive Annahme</span></button>
+        <button type="button" class="case-card" data-case="older-child"><strong>Älteres Kind</strong><span>19 Jahre · Altersgrenzen sichtbar</span></button>
+      </div>
+    </section>
+
+    <section id="check" class="shell workspace">
+      <div class="panel form-panel">
+        <div class="section-head"><div><p class="step">01</p><h2>Ihre Situation</h2></div><span class="state self">selbst angegeben</span></div>
+        <p class="muted">Diese Angaben helfen bei der Orientierung. Sie sind noch kein geprüfter Nachweis.</p>
+        <form id="v1-form">
+          <fieldset>
+            <legend>Haushalt</legend>
+            <div class="segmented">
+              <label><input type="radio" name="householdType" value="single" checked><span>Alleinerziehend</span></label>
+              <label><input type="radio" name="householdType" value="couple"><span>Zwei Erwachsene</span></label>
+            </div>
+          </fieldset>
+          <div class="field-row">
+            <label><span>Bruttoeinkommen / Monat</span><div class="money"><b>€</b><input id="v1-income" type="number" min="0" max="100000" step="50" value="2000" required></div></label>
+            <label><span>Warmmiete / Monat</span><div class="money"><b>€</b><input id="v1-rent" type="number" min="0" max="20000" step="50" value="1100" required></div></label>
+          </div>
+          <div class="children-box">
+            <div class="children-title"><span>Kinder und Alter</span><button id="v1-add-child" class="text-button" type="button">+ Kind</button></div>
+            <div id="v1-children"></div>
+          </div>
+          <label class="checkline"><input id="v1-kindergeld" type="checkbox" checked><span><strong>Ich bekomme aktuell Kindergeld</strong><small>Nur ankreuzen, wenn Sie das sicher wissen.</small></span></label>
+          <p id="v1-error" class="error hidden" role="alert"></p>
+          <button id="v1-submit" class="button primary wide" type="submit">Unterstützung prüfen <span aria-hidden="true">→</span></button>
+        </form>
+        <div class="local-controls">
+          <button id="v1-save" type="button" class="button secondary">In diesem Browser speichern</button>
+          <button id="v1-load-local" type="button" class="text-button hidden">Lokale Daten laden</button>
+          <button id="v1-forget" type="button" class="text-button hidden">Lokale Daten löschen</button>
+        </div>
+        <p class="fineprint">Speichern ist optional und bleibt in diesem Browser. Der Leistungs-Check sendet keine Namen, Adressen oder Dokumente.</p>
+      </div>
+
+      <div class="panel result-panel">
+        <div class="section-head"><div><p class="step">02</p><h2>Ihr Überblick</h2></div><span id="v1-policy" class="state neutral">noch nicht geprüft</span></div>
+        <div id="v1-empty" class="empty">
+          <span class="empty-mark" aria-hidden="true">→</span>
+          <h3>Hier erscheint Ihr nächster sinnvoller Schritt.</h3>
+          <p>Wir zeigen keine erfundenen Ansprüche. Unsicherheit bleibt sichtbar.</p>
+        </div>
+        <div id="v1-result" class="hidden">
+          <div class="summary">
+            <p class="mini-label">KURZÜBERBLICK</p>
+            <h3 id="v1-headline"></h3>
+            <p id="v1-boundary"></p>
+          </div>
+          <div id="v1-benefits" class="benefits"></div>
+          <div class="two-col">
+            <div><h3>Was Sie wahrscheinlich brauchen</h3><div id="v1-evidence" class="list"></div></div>
+            <div><h3>Was Sie jetzt tun können</h3><div id="v1-next" class="list"></div></div>
+          </div>
+          <div class="result-actions">
+            <button id="v1-download" type="button" class="button secondary">Checkliste herunterladen</button>
+            <a class="button ghost" href="/index.html#passport-panel">Antrag-Entwurf testen</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="v1-proof" class="shell proof-section hidden" aria-labelledby="proof-title">
+      <div class="section-head proof-heading">
+        <div><p class="step">03</p><p class="eyebrow">OPENPROOF</p><h2 id="proof-title">Was könnten Sie beweisen, ohne das ganze Dokument zu teilen?</h2></div>
+        <span id="v1-proof-state" class="state self">selbst angegeben</span>
+      </div>
+      <div class="proof-grid">
+        <article class="panel proof-main">
+          <div class="proof-intro">
+            <div class="proof-icon" aria-hidden="true">◈</div>
+            <div><h3 id="v1-proof-headline">Noch kein Proof-Check</h3><p id="v1-proof-copy"></p></div>
+          </div>
+          <div id="v1-proof-predicates" class="predicate-list"></div>
+          <div class="privacy-split">
+            <div class="share-box"><span>Der Proof würde zeigen</span><ul id="v1-proof-shared"></ul></div>
+            <div class="private-box"><span>Bleibt privat</span><ul id="v1-proof-private"></ul></div>
+          </div>
+          <div class="request-row"><span>Anfrage-Fingerabdruck</span><code id="v1-request-digest">—</code></div>
+          <p class="proof-boundary"><strong>Wichtig:</strong> Ihre aktuellen Werte sind selbst angegeben. Ohne einen offiziellen/EUDI-kompatiblen Aussteller nennen wir diesen Fall bewusst nicht „verifiziert“.</p>
+        </article>
+
+        <aside class="panel rail-proof">
+          <p class="mini-label">FUNKTIONIERT DIE TECHNIK WIRKLICH?</p>
+          <h3>Ja — der lokale Midnight-End-to-End-Pfad ist grün.</h3>
+          <p>Ein synthetischer Familiennachweis wurde als echter ZK-Transaktionstest durch Proof Server, Midnight-Node und Indexer geschickt. Der Receipt wurde danach unabhängig aus dem Indexer gelesen und auf Zweck, Policy, Aussteller, Anfrage und Replay-Schutz geprüft.</p>
+          <dl class="rail-facts">
+            <div><dt>Proof-Transaktion</dt><dd><code>007a5de3…99fb44</code></dd></div>
+            <div><dt>Block</dt><dd>16</dd></div>
+            <div><dt>CI</dt><dd>OpenProof run 33167627520</dd></div>
+            <div><dt>Netz</dt><dd>Ephemeral local Midnight</dd></div>
+          </dl>
+          <a class="button ghost wide" href="https://github.com/mikelninh/openaction/pull/12" target="_blank" rel="noreferrer">Technischen Proof ansehen ↗</a>
+          <p class="fineprint">Das ist Infrastruktur-Evidence, nicht ein Nachweis über Sie und kein Mainnet-/Behördenbeleg.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="shell safety">
+      <div class="section-head"><div><p class="eyebrow">DIE GRENZEN SIND TEIL DES PRODUKTS</p><h2>Was v1.0 bewusst nicht behauptet</h2></div></div>
+      <div class="safety-grid">
+        <article><strong>Kein Anspruchsbescheid</strong><p>Nur die zuständige Behörde kann verbindlich entscheiden, ob und wie viel Ihnen zusteht.</p></article>
+        <article><strong>Keine automatische Antragstellung</strong><p>Wir bereiten vor. Sie entscheiden, ob Sie einen offiziellen Dienst öffnen oder etwas exportieren.</p></article>
+        <article><strong>Kein „Blockchain = Wahrheit“</strong><p>Ein ZK-Proof ist nur so gut wie die attestierten Eingangsdaten und die geprüfte Policy.</p></article>
+        <article><strong>Berlin-Pilot</strong><p>Andere Städte und nicht unterstützte Fälle müssen fail-closed bleiben statt Berliner Regeln zu übernehmen.</p></article>
+      </div>
+    </section>
+
+    <section class="shell final-cta">
+      <div><p class="eyebrow">PUBLIC PILOT</p><h2>Hilft Ihnen das, schneller zu verstehen, was Sie tun können?</h2><p>Der nächste Schritt für v1.x ist nicht „mehr AI“, sondern mehr echte Leistungen, bessere amtliche Datenquellen und offizielle Nachweise, die sich mit minimaler Offenlegung wiederverwenden lassen.</p></div>
+      <a class="button secondary" href="https://github.com/mikelninh/public-service-passport" target="_blank" rel="noreferrer">Projekt & Feedback ↗</a>
+    </section>
+  </main>
+
+  <footer><span>Public Service Passport · v1.0 Public Pilot</span><span>Orientierung → Nachweise → menschliche Entscheidung → Behörde</span></footer>
+  <script type="module" src="/v1.js"></script>
+</body>
+</html>
