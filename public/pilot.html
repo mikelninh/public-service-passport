@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Kontrollierter synthetischer 100-Fälle-Pilot für den Public Service Passport Authority Workbench." />
+  <title>100-Fälle Behördenpilot — Public Service Passport</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="stylesheet" href="/pilot.css" />
+</head>
+<body>
+  <header class="pilot-top shell">
+    <a class="pilot-brand" href="/">Public Service Passport</a>
+    <nav><a href="/">Bürgeransicht</a><a href="/authority.html">Behörden-Sandbox</a></nav>
+  </header>
+
+  <main class="shell pilot-main">
+    <section class="pilot-hero">
+      <div>
+        <span class="pilot-kicker">SYNTHETISCHER BEHÖRDENPILOT · 100 FÄLLE</span>
+        <h1>Was muss ein Mensch wirklich noch prüfen?</h1>
+        <p>100 kontrollierte Fälle laufen durch denselben Proof-, Preflight-, Entscheidungs- und Zahlungsprozess. Jeder Fall hat vorher festgelegte Ground Truth dafür, ob er direkt weiter darf oder welche Ausnahme erkannt werden muss.</p>
+      </div>
+      <aside class="pilot-boundary">
+        <strong>Kein gemessener Behördenbetrieb.</strong>
+        <p>Routing- und Integrity-Werte sind echte deterministische Testergebnisse. Die Arbeitsersparnis ist ein transparentes Modell dieser synthetischen Kohorte — keine behauptete reale Zeitersparnis.</p>
+      </aside>
+    </section>
+
+    <section class="metric-grid" aria-label="Pilot-Kennzahlen">
+      <article><span>Fälle</span><strong id="m-total">—</strong><small>kontrolliert synthetisch</small></article>
+      <article><span>Fast Path</span><strong id="m-fast">—</strong><small>ohne initiale Ausnahme</small></article>
+      <article><span>Exception Path</span><strong id="m-exception">—</strong><small>gezielt an Menschen geroutet</small></article>
+      <article><span>Routing korrekt</span><strong id="m-routing">—</strong><small>gegen vorab definierte Ground Truth</small></article>
+      <article><span>Proof-Abdeckung</span><strong id="m-proof">—</strong><small>source-verifiziert bei Eingang</small></article>
+      <article><span>Payment Integrity</span><strong id="m-payment">—</strong><small>kein Geld ohne Bewilligung</small></article>
+    </section>
+
+    <section class="pilot-section">
+      <div class="section-head"><div><span>01</span><h2>Die 100 Fälle</h2></div><p>Bewusst kontrollierte Mischung statt zufälliger Demo-Daten.</p></div>
+      <div id="cohort-grid" class="cohort-grid"></div>
+    </section>
+
+    <section class="pilot-section two-col">
+      <div>
+        <div class="section-head"><div><span>02</span><h2>Was blockiert Fälle?</h2></div></div>
+        <div id="blockers" class="blocker-list"></div>
+      </div>
+      <div>
+        <div class="section-head"><div><span>03</span><h2>End-to-End Integrity</h2></div></div>
+        <div id="integrity" class="integrity-list"></div>
+      </div>
+    </section>
+
+    <section class="pilot-section workload-section">
+      <div class="section-head"><div><span>04</span><h2>Illustratives Arbeitsmodell</h2></div><p>Nicht mit echter Behördenzeit verwechseln.</p></div>
+      <div class="workload-grid">
+        <article><span>Baseline-Annahme</span><strong id="w-base">—</strong><small>manuelle Touches</small></article>
+        <article><span>Modellierter Flow</span><strong id="w-model">—</strong><small>manuelle Touches</small></article>
+        <article class="accent"><span>Vermiedene Touches</span><strong id="w-avoided">—</strong><small id="w-reduction">—</small></article>
+      </div>
+      <p id="workload-note" class="model-note"></p>
+    </section>
+
+    <section class="pilot-section">
+      <div class="section-head"><div><span>05</span><h2>Alle Fälle nachvollziehbar</h2></div><p>Die ersten 100 Ergebnisse aus exakt demselben Runner wie im Test.</p></div>
+      <div class="case-filters" role="group" aria-label="Fallfilter">
+        <button class="filter active" data-filter="all" type="button">Alle</button>
+        <button class="filter" data-filter="ready_for_decision" type="button">Fast Path</button>
+        <button class="filter" data-filter="in_review" type="button">Ausnahme</button>
+        <button class="filter" data-filter="decision_rejected" type="button">Abgelehnt</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Fall</th><th>Profil</th><th>Eingangsroute</th><th>Proof</th><th>Entscheidung</th><th>Endzustand</th><th>Touches</th></tr></thead>
+          <tbody id="case-table"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="pilot-close">
+      <span>WAS DIESER PILOT BEWEIST</span>
+      <h2>Automatisieren, was deterministisch prüfbar ist. Menschen nur die echten Ausnahmen und Entscheidungen geben.</h2>
+      <p>Der nächste Beweis braucht keine größere Simulation, sondern echte anonymisierte Prozessdaten und einen Behördenpartner: Welche Nachweise werden heute wiederholt geprüft, wie viele Rückfragen entstehen, und wie lange liegen saubere Fälle zwischen den Gates?</p>
+      <div class="close-actions"><a href="/authority.html">Einzelfall durchspielen →</a><a href="https://github.com/mikelninh/public-service-passport" target="_blank" rel="noreferrer">Code & Tests ↗</a></div>
+    </section>
+  </main>
+
+  <script type="module" src="/pilot.js"></script>
+</body>
+</html>
