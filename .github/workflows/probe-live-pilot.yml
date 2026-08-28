@@ -28,9 +28,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          curl -fsSL https://public-service-passport.netlify.app/pilot.js | grep -q "runSyntheticAuthorityPilot"
-          curl -fsSL https://public-service-passport.netlify.app/pilot-core.js | grep -q "runSyntheticAuthorityPilot"
-          curl -fsSL https://public-service-passport.netlify.app/pilot.css | grep -q "metric-grid"
+          js=$(curl -fsSL https://public-service-passport.netlify.app/pilot.js)
+          core=$(curl -fsSL https://public-service-passport.netlify.app/pilot-core.js)
+          css=$(curl -fsSL https://public-service-passport.netlify.app/pilot.css)
+          grep -q "runSyntheticAuthorityPilot" <<<"$js"
+          grep -q "runSyntheticAuthorityPilot" <<<"$core"
+          grep -q "metric-grid" <<<"$css"
           echo "Pilot assets are live."
 
       - name: Render production dashboard in Chrome
