@@ -42,10 +42,10 @@ async function runViewport(browser, name, viewport) {
   try {
     const response = await page.goto(`${BASE_URL}/`, { waitUntil: 'networkidle' });
     assert.equal(response?.status(), 200, `${name}: root must respond 200`);
-    assert.match(await page.title(), /Public Service Passport v1\.0/);
+    assert.match(await page.title(), /Public Service Passport v1\.0 RC1/);
     assert.equal(await page.locator('#v1-proof').evaluate((element) => element.classList.contains('hidden')), true, `${name}: proof should wait for a case`);
     assert.match(await text(page, 'body'), /Keine automatische Antragstellung/);
-    assert.match(await text(page, 'body'), /v1\.0 · Public Pilot/);
+    assert.match(await text(page, 'body'), /v1\.0 RC1 · Public Test/);
 
     await page.locator('[data-case="single-parent-main"]').click();
     await page.locator('#v1-result:not(.hidden)').waitFor();
