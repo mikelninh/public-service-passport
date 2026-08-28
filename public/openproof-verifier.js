@@ -194,23 +194,23 @@ export function assessFamilyProofReadiness(household = {}) {
       minimumChildren: 1
     },
     publicProofWouldReveal: [
-      'proof type',
-      'purpose',
-      'policy version',
-      'authorised issuer id',
-      'request binding',
-      'verifier challenge hash',
-      'one-time nullifier'
+      'Nachweisart',
+      'Zweck des Nachweises',
+      'Policy-Version',
+      'ID des autorisierten Ausstellers',
+      'Bindung an genau diese Anfrage',
+      'Hash der Verifier-Challenge',
+      'einmaliger Nullifier gegen Replay'
     ],
     privateValuesNotShared: [
-      'exact income',
-      'rent',
-      'child ages',
-      'name and address',
-      'unrelated household details'
+      'exaktes Einkommen',
+      'Warmmiete',
+      'Alter der Kinder',
+      'Name und Adresse',
+      'nicht benötigte Haushaltsdetails'
     ],
-    nextRequirement: 'Connect an official/EUDI-compatible issuer credential before this citizen case can become an authoritative proof.',
-    boundary: 'Current household values are self-attested orientation data, not cryptographically verified facts.'
+    nextRequirement: 'Ein offizieller bzw. EUDI-kompatibler Aussteller-Nachweis muss verbunden werden, bevor dieser Fall autoritativ verifiziert werden kann.',
+    boundary: 'Die aktuellen Haushaltswerte sind selbst angegebene Orientierungsdaten und keine kryptografisch verifizierten Tatsachen.'
   };
 }
 

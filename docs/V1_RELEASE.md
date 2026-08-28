@@ -2,9 +2,9 @@
 
 ## Release definition
 
-**v1.0 means a public, useful, safety-bounded Berlin family-benefits pilot — not a production entitlement authority.**
+**v1.0 means the first stable, public, useful and safety-bounded Berlin family-benefits journey — not a production entitlement authority.**
 
-A citizen should be able to:
+“Stable” refers to the citizen contract and trust semantics, not to nationwide coverage. A citizen should be able to:
 
 1. describe a supported household without creating an account;
 2. understand what is known, what is only a preliminary signal, and what must be decided officially;
@@ -14,6 +14,19 @@ A citizen should be able to:
 6. inspect evidence that the OpenProof/Midnight rail has completed a real local ZK transaction and authoritative indexer receipt check;
 7. leave with a concrete next action and an official source rather than a generic chatbot answer.
 
+## Version promise
+
+The **v1.x** line may add more benefits, geographies, issuers, languages and integrations, but it may not silently weaken these guarantees:
+
+- self-attested data stays distinguishable from verified data;
+- a matching caller-supplied receipt is not authoritative by itself;
+- cryptographic verification requires a trusted verifier-owned indexer read;
+- proof remains evidence, never an entitlement or authority decision;
+- no automatic authority submission appears behind an existing read-only action;
+- missing/unsupported conditions fail closed rather than being guessed.
+
+A breaking change to these trust/authority semantics requires **v2.0**, not a quiet v1.x update.
+
 ## Citizen trust states
 
 v1.0 uses three explicit states:
@@ -21,7 +34,7 @@ v1.0 uses three explicit states:
 | State | Meaning | May show “verified”? |
 |---|---|---:|
 | Self-attested | The citizen entered the value. Useful for orientation. | No |
-| Proof-ready | The required predicate can be described, but an official issuer credential is not connected. | No |
+| Proof-ready / nachweisbereit | The required predicate can be described, but an official issuer credential is not connected. | No |
 | Cryptographically verified | A trusted verifier independently read the matching receipt from the Midnight indexer. | Yes |
 
 A pasted JSON object never upgrades itself to the third state merely by claiming it came from an indexer.
@@ -103,6 +116,21 @@ The current OpenAction CI has already graduated the local-network rung for one s
 - raw disclosures reject;
 - self-attested proof-readiness output contains no raw income/rent values.
 
+### Real browser release gate
+
+Chromium must exercise the public root at both **1440×900** and **390×844**, including:
+
+- main golden-case click-through;
+- expected €518 + €594 headline;
+- proof-readiness language without false verification;
+- explicit amount semantics;
+- privacy list;
+- official source/next-step link hosts;
+- opt-in local save + deletion;
+- no horizontal overflow;
+- touch-usable primary CTA;
+- zero browser console/page errors.
+
 ## Public release gates
 
 A release candidate is v1.0-ready only when all are true:
@@ -113,9 +141,9 @@ A release candidate is v1.0-ready only when all are true:
 - [ ] syntax checks green;
 - [ ] CSP / frame / nosniff guards green;
 - [ ] no consequential WebMCP submission tool exists;
-- [ ] mobile layout remains usable at 390 px;
-- [ ] all benefit amounts are labelled as known anchor / maximum potential / not calculated;
-- [ ] every external next step links to an official source;
+- [ ] desktop + 390 px mobile Chromium gate green;
+- [ ] all benefit amounts are explicitly labelled as known anchor / maximum potential / not calculated;
+- [ ] every external result/next-step link points to an allowlisted official source;
 - [ ] current visitor is never labelled cryptographically verified without issuer + trusted indexer path;
 - [ ] “proof ≠ entitlement” is visible in the citizen UI;
 - [ ] release version and policy version are visible.

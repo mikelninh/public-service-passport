@@ -31,11 +31,14 @@ async function runViewport(browser, name, viewport) {
     await page.locator('#v1-proof:not(.hidden)').waitFor();
 
     assert.equal(await text(page, '#v1-headline'), GOLDEN_HEADLINE, `${name}: golden result changed`);
-    assert.match(await text(page, '#v1-proof-state'), /proof-ready/);
+    assert.match(await text(page, '#v1-proof-state'), /nachweisbereit/);
     assert.match(await text(page, '#v1-proof'), /Ihre aktuellen Werte sind selbst angegeben/);
-    assert.match(await text(page, '#v1-proof-private'), /exact income/i);
+    assert.match(await text(page, '#v1-proof-private'), /exaktes Einkommen/i);
     assert.match(await text(page, '.rail-proof'), /OpenProof run 33167627520/);
     assert.match(await text(page, '.rail-proof'), /Infrastruktur-Evidence, nicht ein Nachweis über Sie/);
+    assert.match(await text(page, '#v1-benefits'), /bekannter Richtwert/);
+    assert.match(await text(page, '#v1-benefits'), /Höchstbetrag · kein Anspruch/);
+    assert.match(await text(page, '#v1-benefits'), /bewusst nicht berechnet/);
 
     const officialLinks = await page.locator('#v1-result a[target="_blank"]').evaluateAll((links) => links.map((link) => link.href));
     assert(officialLinks.length >= 3, `${name}: expected several official next-step/source links`);
@@ -60,7 +63,7 @@ async function runViewport(browser, name, viewport) {
     assert(ctaBox && ctaBox.width >= 44 && ctaBox.height >= 44, `${name}: primary CTA must remain touch-usable`);
     assert.deepEqual(runtimeErrors, [], `${name}: browser runtime errors: ${runtimeErrors.join(' | ')}`);
 
-    console.log(`✓ ${name}: golden case + proof readiness + privacy + storage + official links + responsive overflow`);
+    console.log(`✓ ${name}: golden case + proof readiness + amount semantics + privacy + storage + official links + responsive overflow`);
   } finally {
     await context.close();
   }

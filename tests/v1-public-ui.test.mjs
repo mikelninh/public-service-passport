@@ -24,7 +24,13 @@ test('v1 exposes the proof privacy distinction without claiming current visitor 
   assert.ok(html.includes('Was könnten Sie beweisen, ohne das ganze Dokument zu teilen?'));
   assert.ok(html.includes('offiziellen/EUDI-kompatiblen Aussteller'));
   assert.ok(html.includes('Das ist Infrastruktur-Evidence, nicht ein Nachweis über Sie'));
-  assert.ok(js.includes("state.textContent = 'proof-ready · Aussteller fehlt'"));
+  assert.ok(js.includes("state.textContent = 'nachweisbereit · Aussteller fehlt'"));
+});
+
+test('v1 labels amount semantics instead of forcing citizens to infer them', () => {
+  assert.ok(js.includes("deterministic_anchor: 'bekannter Richtwert'"));
+  assert.ok(js.includes("maximum_potential_not_entitlement: 'Höchstbetrag · kein Anspruch'"));
+  assert.ok(js.includes("not_calculated: 'bewusst nicht berechnet'"));
 });
 
 test('v1 keeps storage explicitly user-triggered', () => {

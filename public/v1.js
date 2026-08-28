@@ -100,6 +100,13 @@ const statusLabel = (status) => ({
   check_if_awarded: 'danach prüfen'
 })[status] || status;
 
+const amountKindLabel = (kind) => ({
+  deterministic_anchor: 'bekannter Richtwert',
+  maximum_potential_not_entitlement: 'Höchstbetrag · kein Anspruch',
+  not_calculated: 'bewusst nicht berechnet',
+  conditional_downstream_right: 'nachgelagertes Recht'
+})[kind] || 'Orientierung';
+
 function amountLabel(benefit) {
   if (benefit.monthlyAmount != null) return `€${Number(benefit.monthlyAmount)} / Monat`;
   if (benefit.annualAnchor != null) return `€${Number(benefit.annualAnchor)} / Jahr`;
@@ -118,6 +125,7 @@ function renderResult(result) {
     <article class="benefit-card">
       <div class="benefit-head"><h3>${escapeHtml(benefit.title)}</h3><span class="signal">${escapeHtml(statusLabel(benefit.status))}</span></div>
       <strong class="amount">${escapeHtml(amountLabel(benefit))}</strong>
+      <span class="signal">${escapeHtml(amountKindLabel(benefit.amountKind))}</span>
       <p>${escapeHtml(benefit.note)}</p>
       <a href="${escapeHtml(benefit.source.url)}" target="_blank" rel="noreferrer">Offizielle Quelle ↗</a>
     </article>`).join('');
@@ -138,7 +146,7 @@ async function renderProof(result) {
   const copy = document.querySelector('#v1-proof-copy');
 
   if (readiness.status === 'NEEDS_OFFICIAL_CREDENTIAL') {
-    state.textContent = 'proof-ready · Aussteller fehlt';
+    state.textContent = 'nachweisbereit · Aussteller fehlt';
     state.className = 'state ready';
     headline.textContent = 'Die privaten Bedingungen lassen sich beschreiben — aber Ihr Fall ist noch nicht verifiziert.';
     copy.textContent = 'Die selbst angegebenen Werte passen zur technischen Demo-Policy. Für einen echten Proof fehlt noch ein offiziell ausgestellter, an Sie gebundener Nachweis.';
